@@ -1,6 +1,5 @@
 "use client";
 
-import { getSingaporeDate } from "@/lib/utils";
 import { Clipboard } from "lucide-react";
 import Link from "next/link"; // Import Link from next/link
 import { usePathname } from "next/navigation";
