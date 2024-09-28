@@ -5,7 +5,9 @@ const PageWrapper = ({
   children: JSX.Element | JSX.Element[];
   className?: string;
 }) => {
-  return <div className={`w-screen px-8 py-12 ${className}`}>{children}</div>;
+  return (
+    <div className={`w-screen px-8 pb-12 pt-16 ${className}`}>{children}</div>
+  );
 };
 
 export default PageWrapper;
