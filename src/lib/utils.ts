@@ -23,7 +23,7 @@ export function parseDate(dateString: string): Date {
   const date = new Date(year, month, day, 23, 59); // Set hours to 23 and minutes to 59
 
   // Set the time to Singapore time (UTC+8)
-  date.setHours(date.getHours() + 8); // Adjust for Singapore time
+  date.setHours(date.getHours() /*+ 8*/); // Adjust for Singapore time
 
   console.log(date);
   return date; // Return the adjusted date
