@@ -25,6 +25,7 @@ export function parseDate(dateString: string): Date {
   // Set the time to Singapore time (UTC+8)
   date.setHours(date.getHours() + 8); // Adjust for Singapore time
 
+  console.log(date);
   return date; // Return the adjusted date
 }
 
