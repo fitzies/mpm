@@ -1,5 +1,6 @@
 "use client";
 
+import { getSingaporeDate } from "@/lib/utils";
 import { Clipboard } from "lucide-react";
 import Link from "next/link"; // Import Link from next/link
 import { usePathname } from "next/navigation";
@@ -60,6 +61,7 @@ const Nav = () => {
         selected={isStatuses}
         href={`/company/${companyName}/statuses`}
       />
+      <div className="ml-auto text-sm">{getSingaporeDate().toUTCString()}</div>
     </div>
   );
 };
