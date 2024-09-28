@@ -16,3 +16,11 @@ interface ActiveStatusWithRecruit {
   recruitId: number | null; // Allow recruitId to be null
   recruit: Recruit | null; // Recruit can also be null
 }
+
+// interface PlusStatusWithRecruit {
+//   id: number; // Status ID
+//   type: string; // Status type (e.g., "MC", "Other")
+//   endDate: string; // End date in ddmmyy format
+//   recruitId: number | null; // Allow recruitId to be null
+//   recruit: Recruit | null; // Recruit can also be null
+// }

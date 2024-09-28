@@ -54,4 +54,9 @@ enum StatusType {
   Physio
   ReportSick
   CustomStatus
+  
+  MCP1
+  MCP2
+  LDP1
+  LDP2
 }

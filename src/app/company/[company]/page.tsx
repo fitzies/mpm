@@ -16,10 +16,11 @@ const Page = async ({ params }: { params: { company: string } }) => {
     return <p>{companyName} does not exist...</p>;
   }
 
-  const recruitsOnStatus = await getActiveStatuses(company.id, [
-    StatusType.LD,
-    StatusType.CustomStatus,
-  ]);
+  const recruitsOnStatus = await getActiveStatuses(
+    company.id,
+    [StatusType.LD, StatusType.CustomStatus],
+    true
+  );
 
   const recruitsOnMC = await getActiveStatuses(company.id, [
     StatusType.MC,
@@ -42,19 +43,21 @@ const Page = async ({ params }: { params: { company: string } }) => {
               company.commanders.length - getCurrentStrength(company.commanders)
             } / ${company.commanders.length.toString()}`}
           ></Chunk>
-          <Chunk title="On status" body="119"></Chunk>
-          <Chunk title="MC" body="119"></Chunk>
+          <Chunk title="Latest conduct" body="None"></Chunk>
+          <Chunk title="Participation strength" body="None"></Chunk>
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-4">
           <Dashboard
             title="Statuses"
             headers={{ left: "Recruit", right: "Status" }}
             data={recruitsOnStatus.slice(0, 5)}
+            length={recruitsOnStatus.length}
           />
           <Dashboard
             title="Out of Camp"
             headers={{ left: "Recruit", right: "Reason" }}
             data={recruitsOnMC.slice(0, 5)}
+            length={recruitsOnMC.length}
           />
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-2">
