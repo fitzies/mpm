@@ -17,16 +17,17 @@ export function getSingaporeDate() {
 export function parseDate(dateString: string): Date {
   const day = parseInt(dateString.substring(0, 2));
   const month = parseInt(dateString.substring(2, 4)) - 1; // JavaScript months are 0-indexed
-  const year = parseInt("20" + dateString.substring(4, 6)); // Assuming 20XX format
+  const year = parseInt("20" + dateString.substring(4, 6));
 
-  // Create a date object for the specified date at 23:59 (local time)
   const date = new Date(year, month, day, 23, 59); // Set hours to 23 and minutes to 59
 
-  // Set the time to Singapore time (UTC+8)
-  date.setHours(date.getHours() /*+ 8*/); // Adjust for Singapore time
+  date.setHours(date.getHours());
+  if (process.env.NODE_ENV !== "production") {
+    date.setHours(date.getHours() + 8);
+    console.log("not prod");
+  }
 
-  console.log(date);
-  return date; // Return the adjusted date
+  return date;
 }
 
 export function getCurrentStrength(

@@ -45,7 +45,7 @@ const Nav = () => {
 
   return (
     <div className="w-screen fixed px-8 py-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-6 bg-white dark:bg-zinc-950">
-      <Clipboard />
+      <Clipboard className="lg:block hidden" />
       <NavItem
         title="Dashboard"
         selected={isDashboard}
@@ -61,7 +61,7 @@ const Nav = () => {
         selected={isStatuses}
         href={`/company/${companyName}/statuses`}
       />
-      <div className="ml-auto text-sm">{getSingaporeDate().toUTCString()}</div>
+      {/* <div className="ml-auto text-sm">{getSingaporeDate().toUTCString()}</div> */}
     </div>
   );
 };
