@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// prisma/schema.prisma
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  // uncomment next line if you use Prisma <5.10
+  // directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+model Company {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  recruits   Recruit[]
+  commanders Commander[]
+}
+
+model Recruit {
+  id         String      @id // 5-length string ID
+  name       String
+  statuses   Status[]     // Recruits can have multiple statuses
+  company    Company      @relation(fields: [companyId], references: [id])
+  companyId  Int
+}
+
+model Commander {
+  id         Int         @id @default(autoincrement())
+  name       String
+  statuses   Status[]     // Commanders can have multiple statuses
+  company    Company      @relation(fields: [companyId], references: [id])
+  companyId  Int
+}
+
+model Status {
+  id          Int         @id @default(autoincrement())
+  type        StatusType
+  startDate   String      // Store start date in ddmmyy format
+  endDate     String      // Store end date in ddmmyy format
+  recruit     Recruit?    @relation(fields: [recruitId], references: [id])  // Nullable, since it could be a Commander
+  recruitId   String?     // Nullable to allow either recruitId or commanderId
+  commander   Commander?  @relation(fields: [commanderId], references: [id]) // Nullable to allow either recruitId or commanderId
+  commanderId Int?        // Nullable to allow either recruitId or commanderId
+}
+
+enum StatusType {
+  MC
+  Other
+  LD
+  Physio
+  ReportSick
+  CustomStatus
+}
