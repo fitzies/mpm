@@ -24,7 +24,6 @@ export function parseDate(dateString: string): Date {
   date.setHours(date.getHours());
   if (process.env.NODE_ENV !== "production") {
     date.setHours(date.getHours() + 8);
-    console.log("not prod");
   }
 
   return date;
