@@ -1,7 +1,11 @@
 import PageWrapper from "@/components/page-wrapper";
 
-const Page = async ({ params }: { params: { company: string } }) => {
-  return <PageWrapper>hi</PageWrapper>;
+const Page = async () => {
+  return (
+    <PageWrapper>
+      <></>
+    </PageWrapper>
+  );
 };
 
 export default Page;

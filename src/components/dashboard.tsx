@@ -14,16 +14,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ActiveStatusWithRecruit } from "../../types";
-import { Status } from "@prisma/client";
 
 export default function Dashboard({
   title,
-  description,
   headers,
   data,
 }: {
   title: string;
-  description?: string;
   headers: { left: string; right: string };
   data?: ActiveStatusWithRecruit[];
 }) {

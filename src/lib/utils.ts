@@ -1,4 +1,3 @@
-import { Recruit } from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { CommanderWithStatuses, RecruitWithStatuses } from "../../types";

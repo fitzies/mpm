@@ -13,7 +13,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
   const company = await getCompany(companyName);
 
   if (!company) {
-    return <p>{companyName} doesn't exist...</p>;
+    return <p>{companyName} does not exist...</p>;
   }
 
   const recruitsOnStatus = await getActiveStatuses(company.id, [

@@ -1,4 +1,4 @@
-import { Status, StatusType } from "@prisma/client";
+import { StatusType } from "@prisma/client";
 import prisma from "./prisma";
 import { getSingaporeDate, parseDate } from "./utils";
 import { ActiveStatusWithRecruit } from "../../types";
