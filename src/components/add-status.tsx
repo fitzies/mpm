@@ -23,6 +23,8 @@ import { useState } from "react";
 import { handleCreateStatus } from "@/lib/actions";
 
 const AddStatus = ({ company }: { company: string }) => {
+  const [open, setOpen] = useState<boolean>();
+
   const [fourD, setFourD] = useState<string>("");
   const [status, setStatus] = useState<string>();
   const [startDate, setStartDate] = useState<string>("");
@@ -39,7 +41,7 @@ const AddStatus = ({ company }: { company: string }) => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open}>
       <DialogTrigger asChild>
         <Button className="absolute right-0">+</Button>
       </DialogTrigger>
@@ -50,7 +52,12 @@ const AddStatus = ({ company }: { company: string }) => {
             Please provide the necessary information to create a new status
           </DialogDescription>
         </DialogHeader>
-        <form action={handleCreateStatus}>
+        <form
+          action={async (data) => {
+            await handleCreateStatus(data);
+            setOpen(() => false);
+          }}
+        >
           <input
             type="text"
             className="hidden"
