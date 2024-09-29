@@ -15,6 +15,7 @@ import { Company, StatusType } from "@prisma/client";
 import { ActiveStatusWithRecruit } from "../../../../../types";
 import { plusToString } from "@/lib/utils";
 import CellEdit from "@/components/cell-edit";
+import AddStatus from "@/components/add-status";
 
 const StausTable = ({
   statuses,
@@ -89,13 +90,16 @@ const Page = async ({ params }: { params: { company: string } }) => {
     <PageWrapper className="flex flex-col items-center">
       <Tabs
         defaultValue="All"
-        className="flex flex-col items-center my-4 lg:w-3/4"
+        className="flex flex-col items-center my-4 lg:w-3/4 w-full"
       >
-        <TabsList className="mx-auto">
-          <TabsTrigger value="All">All</TabsTrigger>
-          <TabsTrigger value="Statuses">Statuses</TabsTrigger>
-          <TabsTrigger value="Out of camp">Out of camp</TabsTrigger>
-        </TabsList>
+        <div className="relative w-full flex items-center">
+          <TabsList className="mx-auto">
+            <TabsTrigger value="All">All</TabsTrigger>
+            <TabsTrigger value="Statuses">Statuses</TabsTrigger>
+            <TabsTrigger value="Out of camp">Out of camp</TabsTrigger>
+          </TabsList>
+          <AddStatus />
+        </div>
         <TabsContent value="All" className="w-full">
           <StausTable statuses={allStatusesList} company={company} />
         </TabsContent>

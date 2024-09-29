@@ -135,3 +135,7 @@ export const getPlusStatuses = async (
 export const deleteStatus = async (statusId: number) => {
   await prisma.status.delete({ where: { id: statusId } });
 };
+
+export const getRecruit = async (id: string) => {
+  return await prisma.recruit.findFirst({ where: { id } });
+};
