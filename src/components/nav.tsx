@@ -17,7 +17,7 @@ const NavItem = ({
     <Link href={href}>
       <p
         className={`text-sm font-medium hover:text-white duration-150 cursor-pointer ${
-          !selected ? "text-zinc-400" : "text-white"
+          !selected ? "text-zinc-400" : "text-black dark:text-white"
         }`}
       >
         {title}

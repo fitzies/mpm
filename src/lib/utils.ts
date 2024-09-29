@@ -90,3 +90,12 @@ export const plusToString = (type: string): string => {
     ? "MC + 2"
     : type; // Fallback if none of the types match
 };
+
+export const getStatusType = (str: string) => {
+  if (str === "LD") return StatusType.LD;
+  if (str === "MC") return StatusType.MC;
+  if (str === "Other") return StatusType.Other;
+  if (str === "CustomStatus") return StatusType.CustomStatus;
+  if (str === "Physio") return StatusType.Physio;
+  if (str === "ReportSick") return StatusType.ReportSick;
+};

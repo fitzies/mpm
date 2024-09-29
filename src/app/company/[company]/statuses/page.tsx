@@ -98,7 +98,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
             <TabsTrigger value="Statuses">Statuses</TabsTrigger>
             <TabsTrigger value="Out of camp">Out of camp</TabsTrigger>
           </TabsList>
-          <AddStatus />
+          <AddStatus company={params.company} />
         </div>
         <TabsContent value="All" className="w-full">
           <StausTable statuses={allStatusesList} company={company} />
