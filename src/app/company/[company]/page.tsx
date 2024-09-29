@@ -44,7 +44,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
             } / ${company.commanders.length.toString()}`}
           ></Chunk>
           <Chunk title="Latest conduct" body="None"></Chunk>
-          <Chunk title="Participation strength" body="None"></Chunk>
+          <Chunk title="Participation strength" body="0%"></Chunk>
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-4">
           <Dashboard
@@ -52,12 +52,14 @@ const Page = async ({ params }: { params: { company: string } }) => {
             headers={{ left: "Recruit", right: "Status" }}
             data={recruitsOnStatus.slice(0, 5)}
             length={recruitsOnStatus.length}
+            href={`${params.company}/statuses`}
           />
           <Dashboard
             title="Out of Camp"
             headers={{ left: "Recruit", right: "Reason" }}
             data={recruitsOnMC.slice(0, 5)}
             length={recruitsOnMC.length}
+            href={`${params.company}/statuses`}
           />
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-2">

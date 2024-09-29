@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { CommanderWithStatuses, RecruitWithStatuses } from "../../types";
 import { getRecruits } from "./db";
+import { StatusType } from "@prisma/client";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -76,4 +77,16 @@ export const getRecruitsOnStatus = async (
     }));
 
   return recruitsOnStatus; // Return the filtered list of recruits with the specified statuses
+};
+
+export const plusToString = (type: string): string => {
+  return type === StatusType.LDP1
+    ? "LD + 1"
+    : type === StatusType.LDP2
+    ? "LD + 2"
+    : type === StatusType.MCP1
+    ? "MC + 1"
+    : type === StatusType.MCP2
+    ? "MC + 2"
+    : type; // Fallback if none of the types match
 };

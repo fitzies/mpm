@@ -1,6 +1,6 @@
 "use client";
 
-import { Clipboard } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import Link from "next/link"; // Import Link from next/link
 import { usePathname } from "next/navigation";
 
@@ -44,7 +44,7 @@ const Nav = () => {
 
   return (
     <div className="w-screen fixed px-8 py-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-6 bg-white dark:bg-zinc-950">
-      <Clipboard className="lg:block hidden" />
+      <Sparkles className="lg:block hidden" />
       <NavItem
         title="Dashboard"
         selected={isDashboard}

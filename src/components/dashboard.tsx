@@ -14,30 +14,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ActiveStatusWithRecruit } from "../../types";
-import { StatusType } from "@prisma/client";
-
-const plusToString = (type: string): string => {
-  return type === StatusType.LDP1
-    ? "LD + 1"
-    : type === StatusType.LDP2
-    ? "LD + 2"
-    : type === StatusType.MCP1
-    ? "MC + 1"
-    : type === StatusType.MCP2
-    ? "MC + 2"
-    : type; // Fallback if none of the types match
-};
+import { plusToString } from "@/lib/utils";
 
 export default function Dashboard({
   title,
   headers,
   data,
   length,
+  href,
 }: {
   title: string;
   headers: { left: string; right: string };
   data?: ActiveStatusWithRecruit[];
   length: number;
+  href?: string;
 }) {
   if (!data) {
     data = [];
@@ -53,7 +43,7 @@ export default function Dashboard({
           {/* <CardDescription>{description}</CardDescription> */}
         </div>
         <Button asChild size="sm" className="ml-auto gap-1">
-          <Link href="#">
+          <Link href={href ?? ""}>
             View All
             <ArrowUpRight className="h-4 w-4" />
           </Link>
