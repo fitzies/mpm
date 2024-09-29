@@ -69,7 +69,9 @@ export default function Dashboard({
                   </TableCell>
                   <TableCell className="table-cell">{`${status.startDate} - ${status.endDate}`}</TableCell>
                   <TableCell className="text-right">
-                    {plusToString(status.type)}
+                    {status.type === "Other" || status.type === "CustomStatus"
+                      ? status.remarks
+                      : plusToString(status.type)}
                   </TableCell>
                 </TableRow>
               );
