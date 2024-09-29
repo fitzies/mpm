@@ -48,7 +48,9 @@ const StausTable = ({
                 {status.startDate} - {status.endDate}
               </TableCell>
               <TableCell className="text-right">
-                {plusToString(status.type)}
+                {status.type === "Other" || status.type === "CustomStatus"
+                  ? status.remarks
+                  : plusToString(status.type)}
               </TableCell>
               <CellEdit status={status} company={company} />
             </TableRow>

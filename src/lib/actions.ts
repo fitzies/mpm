@@ -27,6 +27,7 @@ export async function handleCreateStatus(data: FormData) {
   const status = data.get("status");
   const startDate = data.get("start-date");
   const endDate = data.get("end-date");
+  const remarks = data.get("remarks")?.toString() ?? "";
 
   const company = data.get("company");
 
@@ -52,6 +53,7 @@ export async function handleCreateStatus(data: FormData) {
       startDate: startDate.toString(),
       endDate: endDate.toString(),
       type: _status,
+      remarks: remarks ?? "",
     },
   });
 

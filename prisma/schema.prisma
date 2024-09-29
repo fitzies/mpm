@@ -45,6 +45,7 @@ model Status {
   recruitId   String?     // Nullable to allow either recruitId or commanderId
   commander   Commander?  @relation(fields: [commanderId], references: [id]) // Nullable to allow either recruitId or commanderId
   commanderId Int?        // Nullable to allow either recruitId or commanderId
+  remarks String?
 }
 
 enum StatusType {

@@ -24,6 +24,7 @@ import { handleCreateStatus } from "@/lib/actions";
 
 const AddStatus = ({ company }: { company: string }) => {
   const [fourD, setFourD] = useState<string>("");
+  const [status, setStatus] = useState<string>();
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
@@ -73,7 +74,11 @@ const AddStatus = ({ company }: { company: string }) => {
             </div>
             <div className="flex items-center gap-6">
               <Label htmlFor="status">Status</Label>
-              <Select name="status">
+              <Select
+                name="status"
+                value={status}
+                onValueChange={(e) => setStatus(() => e)}
+              >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select a status" />
                 </SelectTrigger>
@@ -91,6 +96,15 @@ const AddStatus = ({ company }: { company: string }) => {
                   })}
                 </SelectContent>
               </Select>
+              {status === "Other" || status === "CustomStatus" ? (
+                <Input
+                  id="remarks"
+                  name="remarks"
+                  placeholder="Please specify"
+                  className="col-span-3"
+                  minLength={2}
+                />
+              ) : null}
             </div>
             <div className="flex">
               <div className="flex items-center gap-9">

@@ -60,6 +60,7 @@ export const getActiveStatuses = async (
       endDate: status.endDate,
       recruitId: status.recruitId ? Number(status.recruitId) : null,
       recruit: status.recruit,
+      remarks: status.remarks ?? "",
     }));
 
   if (!plus) {
@@ -126,6 +127,7 @@ export const getPlusStatuses = async (
         endDate: status.endDate,
         recruitId: status.recruitId, // Keep recruitId as string
         recruit: status.recruit,
+        remarks: status.remarks,
       };
     });
 
