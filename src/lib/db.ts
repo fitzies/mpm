@@ -36,7 +36,6 @@ export const getActiveStatuses = async (
   plus: boolean = false
 ): Promise<ActiveStatusWithRecruit[]> => {
   const sgTime = getSingaporeDate();
-  console.log(companyId);
 
   const _statuses = await prisma.status.findMany({
     where: {
@@ -131,4 +130,8 @@ export const getPlusStatuses = async (
     });
 
   return filteredStatuses as ActiveStatusWithRecruit[];
+};
+
+export const deleteStatus = async (statusId: number) => {
+  await prisma.status.delete({ where: { id: statusId } });
 };
