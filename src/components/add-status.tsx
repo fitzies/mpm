@@ -40,10 +40,14 @@ const AddStatus = ({ company }: { company: string }) => {
     return fourD.length === 5 && startDate.length === 6 && endDate.length === 6;
   };
 
+  const openDialog = () => {
+    setOpen(() => true);
+  }
+
   return (
     <Dialog open={open}>
       <DialogTrigger asChild>
-        <Button className="absolute right-0">+</Button>
+        <Button className="absolute right-0" onClick={openDialog}>+</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
