@@ -60,7 +60,7 @@ export async function handleCreateStatus(data: FormData) {
     });
   } catch (error) {
     console.error(error);
-    return "Please enter a correct 4D...";
+    return "Please enter an existing 4d...";
   }
 
   revalidatePath(`company/${company.toString().toLowerCase()}/statuses`);
