@@ -149,5 +149,5 @@ export const validDate = (date1: string, date2: string): boolean => {
   const dateObj2 = parseDate(date2);
 
   // Return false if either date is invalid or if date1 is not earlier than date2
-  return dateObj1 !== null && dateObj2 !== null && dateObj1 < dateObj2;
+  return dateObj1 !== null && dateObj2 !== null && dateObj1 <= dateObj2;
 };
