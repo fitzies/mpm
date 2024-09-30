@@ -99,3 +99,30 @@ export const getStatusType = (str: string) => {
   if (str === "Physio") return StatusType.Physio;
   if (str === "ReportSick") return StatusType.ReportSick;
 };
+
+export const validDate = (date1: string, date2: string): boolean => {
+  // Check if a date is valid and return a Date object
+  const parseDate = (dateStr: string): Date | null => {
+    if (dateStr.length !== 6) return null;
+
+    const day = parseInt(dateStr.slice(0, 2), 10);
+    const month = parseInt(dateStr.slice(2, 4), 10) - 1; // Months are 0-indexed
+    const year = parseInt(dateStr.slice(4, 6), 10) + 2000; // Assuming years are from 2000+
+
+    const date = new Date(year, month, day);
+
+    // Validate if the created date matches the input
+    return date.getDate() === day &&
+      date.getMonth() === month &&
+      date.getFullYear() === year
+      ? date
+      : null;
+  };
+
+  // Parse both dates
+  const dateObj1 = parseDate(date1);
+  const dateObj2 = parseDate(date2);
+
+  // Return false if either date is invalid or if date1 is not earlier than date2
+  return dateObj1 !== null && dateObj2 !== null && dateObj1 < dateObj2;
+};

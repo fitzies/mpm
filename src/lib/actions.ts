@@ -3,14 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { deleteStatus } from "./db";
 import prisma from "./prisma";
-import { getStatusType } from "./utils";
+import { getStatusType, validDate } from "./utils";
 import { StatusType } from "@prisma/client";
 
 export const handleDeleteStatus = async (data: FormData) => {
   const statusId = data.get("statusId");
   const companyName = data.get("companyName");
-
-  console.log(companyName);
 
   if (!statusId || !companyName) {
     console.error("No status found...");
@@ -31,33 +29,40 @@ export async function handleCreateStatus(data: FormData) {
 
   const company = data.get("company");
 
-  console.log(company);
-
   // Check for correct inputs
 
   if (!fourD || !status || !startDate || !endDate || !company) {
     console.log("Form inputs wrong...");
-    return;
+    return "Please input the form correctly...";
   }
 
   const _status: StatusType | undefined = getStatusType(status.toString());
 
   if (!_status) {
     console.log("Status is wrong...");
-    return;
+    return "This status doesn't exist...";
   }
 
-  const newStatus = await prisma.status.create({
-    data: {
-      recruitId: fourD.toString(),
-      startDate: startDate.toString(),
-      endDate: endDate.toString(),
-      type: _status,
-      remarks: remarks ?? "",
-    },
-  });
+  if (!validDate(startDate.toString(), endDate.toString())) {
+    console.log("Dates are wrong...");
+    return "Please input valid dates...";
+  }
 
-  console.log(newStatus);
+  try {
+    await prisma.status.create({
+      data: {
+        recruitId: fourD.toString(),
+        startDate: startDate.toString(),
+        endDate: endDate.toString(),
+        type: _status,
+        remarks: remarks ?? "",
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return "Please enter a correct 4D...";
+  }
 
   revalidatePath(`company/${company.toString().toLowerCase()}/statuses`);
+  return true;
 }

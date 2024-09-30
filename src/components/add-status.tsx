@@ -24,6 +24,7 @@ import { handleCreateStatus } from "@/lib/actions";
 
 const AddStatus = ({ company }: { company: string }) => {
   const [open, setOpen] = useState<boolean>();
+  const [error, setError] = useState<string>();
 
   const [fourD, setFourD] = useState<string>("");
   const [status, setStatus] = useState<string>();
@@ -42,12 +43,28 @@ const AddStatus = ({ company }: { company: string }) => {
 
   const openDialog = () => {
     setOpen(() => true);
-  }
+  };
+
+  const handleSubmitForm = async (data: FormData) => {
+    const res = await handleCreateStatus(data);
+    if (res !== true) {
+      setError(() => res);
+    } else {
+      setOpen(() => false);
+    }
+  };
 
   return (
-    <Dialog open={open}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(() => v);
+      }}
+    >
       <DialogTrigger asChild>
-        <Button className="absolute right-0" onClick={openDialog}>+</Button>
+        <Button className="absolute right-0" onClick={openDialog}>
+          +
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -57,9 +74,8 @@ const AddStatus = ({ company }: { company: string }) => {
           </DialogDescription>
         </DialogHeader>
         <form
-          action={async (data) => {
-            await handleCreateStatus(data);
-            setOpen(() => false);
+          action={async (data: FormData) => {
+            handleSubmitForm(data);
           }}
         >
           <input
@@ -125,6 +141,7 @@ const AddStatus = ({ company }: { company: string }) => {
                   name="start-date"
                   placeholder="290924"
                   className="col-span-3"
+                  type="number"
                   maxLength={6}
                   minLength={6}
                   value={startDate}
@@ -140,6 +157,7 @@ const AddStatus = ({ company }: { company: string }) => {
                   name="end-date"
                   placeholder="290924"
                   className="col-span-3"
+                  type="number"
                   maxLength={6}
                   minLength={6}
                   value={endDate}
@@ -155,6 +173,7 @@ const AddStatus = ({ company }: { company: string }) => {
               Submit
             </Button>
           </div>
+          <p className="text-sm text-red-500">{error}</p>
         </form>
       </DialogContent>
     </Dialog>
