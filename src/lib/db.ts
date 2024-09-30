@@ -1,4 +1,4 @@
-import { StatusType } from "@prisma/client";
+import { Status, StatusType } from "@prisma/client";
 import prisma from "./prisma";
 import { getSingaporeDate, parseDate } from "./utils";
 import { ActiveStatusWithRecruit } from "../../types";
@@ -28,6 +28,27 @@ export const getRecruits = async (companyId: number) => {
   });
 
   return recruits;
+};
+
+export const getRecruitsWithStatus = async (
+  companyId: number,
+  statuses: StatusType[]
+) => {
+  const recruits = await prisma.recruit.findMany({
+    where: {
+      companyId,
+      statuses: {
+        some: {
+          type: {
+            in: statuses, // Filter by the provided statuses
+          },
+        },
+      },
+    },
+    distinct: ["id"], // Ensure unique recruits are counted
+  });
+
+  return recruits.length; // Return the count of unique recruits
 };
 
 export const getActiveStatuses = async (

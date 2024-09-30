@@ -1,7 +1,7 @@
 import Chunk from "@/components/chunk";
 import Dashboard from "@/components/dashboard";
 import PageWrapper from "@/components/page-wrapper";
-import { getActiveStatuses, getCompany } from "@/lib/db";
+import { getActiveStatuses, getCompany, getRecruitsWithStatus } from "@/lib/db";
 import { getOutOfCampStrength, getPlatoonStrength } from "@/lib/utils";
 import { StatusType } from "@prisma/client";
 
@@ -21,7 +21,13 @@ const Page = async ({ params }: { params: { company: string } }) => {
     true
   );
 
-  const recruitsOnMC = await getActiveStatuses(company.id, [
+  const recruitsOnMC = await getActiveStatuses(
+    company.id,
+    [StatusType.MC, StatusType.Other],
+    false
+  );
+
+  const recruitsOnMcCount = await getRecruitsWithStatus(company.id, [
     StatusType.MC,
     StatusType.Other,
   ]);
@@ -58,7 +64,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
             title="Out of Camp"
             headers={{ left: "Recruit", right: "Reason" }}
             data={recruitsOnMC.slice(0, 5)}
-            length={recruitsOnMC.length}
+            length={recruitsOnMcCount}
             href={`${params.company}/statuses`}
           />
         </div>
