@@ -28,7 +28,7 @@ const CellEdit = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
+          {/* <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem> */}
           <form action={handleDeleteStatus}>
             <input className="hidden" name="statusId" value={status.id} />
             <input
