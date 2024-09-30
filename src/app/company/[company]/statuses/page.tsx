@@ -42,7 +42,7 @@ const StausTable = ({
           {statuses.map((status: ActiveStatusWithRecruit, index) => (
             <TableRow key={status.endDate + index}>
               <TableCell className="font-medium">
-                {status.recruit?.name}
+                {status.recruit?.id} {status.recruit?.name}
               </TableCell>
               <TableCell>
                 {status.startDate} - {status.endDate}

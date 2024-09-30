@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { CommanderWithStatuses, RecruitWithStatuses } from "../../types";
 import { getRecruits } from "./db";
-import { StatusType } from "@prisma/client";
+import { Recruit, StatusType } from "@prisma/client";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -30,12 +30,30 @@ export function parseDate(dateString: string): Date {
   return date;
 }
 
-export function getCurrentStrength(
-  arr: RecruitWithStatuses[] | CommanderWithStatuses[]
+export function getOutOfCampStrength(
+  arr: RecruitWithStatuses[] | CommanderWithStatuses[],
+  platoon?: 1 | 2 | 3 | 4
 ): number {
   const sgDate = getSingaporeDate(); // Get current date/time in Singapore timezone
 
   let count = 0;
+
+  if (platoon !== undefined && platoon > 0) {
+    arr.forEach((y) => {
+      // Check if any status is 'MC' or 'Other'
+      if (
+        y.statuses.some(
+          (status) =>
+            (status.type === "MC" || status.type === "Other") &&
+            parseDate(status.endDate) >= sgDate &&
+            parseInt(status.recruitId!.substring(1, 2)) === platoon
+        )
+      ) {
+        count++; // Increment count if condition is met
+      }
+    });
+    return count;
+  }
 
   arr.forEach((y) => {
     // Check if any status is 'MC' or 'Other'
@@ -52,6 +70,13 @@ export function getCurrentStrength(
 
   return count; // Return the total count of recruits or commanders with 'MC' or 'Other' statuses
 }
+
+export const getPlatoonStrength = (arr: Recruit[], platoon: 1 | 2 | 3 | 4) => {
+  const res = arr.filter(
+    (recruit) => parseInt(recruit.id.substring(1, 2)) === platoon
+  );
+  return res.length;
+};
 
 export const getRecruitsOnStatus = async (
   companyId: number,

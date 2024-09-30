@@ -1,9 +1,8 @@
 import Chunk from "@/components/chunk";
 import Dashboard from "@/components/dashboard";
 import PageWrapper from "@/components/page-wrapper";
-import ParadeChunk from "@/components/parade-chunk";
 import { getActiveStatuses, getCompany } from "@/lib/db";
-import { getCurrentStrength } from "@/lib/utils";
+import { getOutOfCampStrength, getPlatoonStrength } from "@/lib/utils";
 import { StatusType } from "@prisma/client";
 
 const Page = async ({ params }: { params: { company: string } }) => {
@@ -34,13 +33,14 @@ const Page = async ({ params }: { params: { company: string } }) => {
           <Chunk
             title="Recruit Strength"
             body={`${
-              company.recruits.length - getCurrentStrength(company.recruits)
+              company.recruits.length - getOutOfCampStrength(company.recruits)
             } / ${company.recruits.length.toString()}`}
           ></Chunk>
           <Chunk
             title="Commander Strength"
             body={`${
-              company.commanders.length - getCurrentStrength(company.commanders)
+              company.commanders.length -
+              getOutOfCampStrength(company.commanders)
             } / ${company.commanders.length.toString()}`}
           ></Chunk>
           <Chunk title="Latest conduct" body="None"></Chunk>
@@ -62,8 +62,36 @@ const Page = async ({ params }: { params: { company: string } }) => {
             href={`${params.company}/statuses`}
           />
         </div>
-        <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-2">
-          <ParadeChunk company={params.company} />
+        <div className="grid gap-4 md:gap-8 lg:grid-rows-2 xl:grid-cols-2">
+          {/* <ParadeChunk company={params.company} /> */}
+          <Chunk
+            title="Platoon 1 Strength"
+            body={`${
+              getPlatoonStrength(company.recruits, 1) -
+              getOutOfCampStrength(company.recruits, 1)
+            } / ${getPlatoonStrength(company.recruits, 1)}`}
+          />
+          <Chunk
+            title="Platoon 2 Strength"
+            body={`${
+              getPlatoonStrength(company.recruits, 2) -
+              getOutOfCampStrength(company.recruits, 2)
+            } / ${getPlatoonStrength(company.recruits, 2)}`}
+          />
+          <Chunk
+            title="Platoon 3 Strength"
+            body={`${
+              getPlatoonStrength(company.recruits, 3) -
+              getOutOfCampStrength(company.recruits, 3)
+            } / ${getPlatoonStrength(company.recruits, 3)}`}
+          />
+          <Chunk
+            title="Platoon 4 Strength"
+            body={`${
+              getPlatoonStrength(company.recruits, 4) -
+              getOutOfCampStrength(company.recruits, 4)
+            } / ${getPlatoonStrength(company.recruits, 4)}`}
+          />
         </div>
       </main>
     </PageWrapper>

@@ -63,7 +63,7 @@ export default function Dashboard({
               return (
                 <TableRow key={status.recruit!.name + index}>
                   <TableCell>
-                    <div className="font-medium">{`${status.recruit!.id} REC ${
+                    <div className="font-medium">{`${status.recruit!.id} ${
                       status.recruit!.name
                     }`}</div>
                   </TableCell>
