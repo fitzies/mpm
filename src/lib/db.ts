@@ -231,7 +231,7 @@ export const getCommanderActiveStatuses = async (
   }
   return activeStatuses; // Return the active statuses if plus is false
 
-  const plusStatuses = await getPlusStatuses(companyId);
+  // const plusStatuses = await getPlusStatuses(companyId);
 
   // Concatenate the active statuses and plus statuses
   // return activeStatuses.concat(plusStatuses);

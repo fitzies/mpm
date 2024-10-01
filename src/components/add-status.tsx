@@ -21,7 +21,6 @@ import {
 import { Commander, StatusType } from "@prisma/client";
 import { useState } from "react";
 import { handleCreateStatus } from "@/lib/actions";
-import { TabsList, TabsTrigger } from "./ui/tabs";
 import { Switch } from "./ui/switch";
 
 const AddStatus = ({
@@ -136,7 +135,10 @@ const AddStatus = ({
                   <SelectContent>
                     {commanders.map((commander) => {
                       return (
-                        <SelectItem value={commander.id.toString()}>
+                        <SelectItem
+                          value={commander.id.toString()}
+                          key={commander.id.toString()}
+                        >
                           {commander.name}
                         </SelectItem>
                       );

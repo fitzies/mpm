@@ -13,7 +13,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   getActiveStatuses,
   getCommanderActiveStatuses,
-  getCommanders,
   getCompany,
 } from "@/lib/db";
 import { Company, StatusType } from "@prisma/client";
