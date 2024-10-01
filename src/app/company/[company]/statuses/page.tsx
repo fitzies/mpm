@@ -10,18 +10,26 @@ import {
 } from "@/components/ui/table";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getActiveStatuses, getCompany } from "@/lib/db";
+import {
+  getActiveStatuses,
+  getCommanderActiveStatuses,
+  getCommanders,
+  getCompany,
+} from "@/lib/db";
 import { Company, StatusType } from "@prisma/client";
-import { ActiveStatusWithRecruit } from "../../../../../types";
+import {
+  ActiveStatusWithCommander,
+  ActiveStatusWithRecruit,
+} from "../../../../../types";
 import { plusToString } from "@/lib/utils";
 import CellEdit from "@/components/cell-edit";
 import AddStatus from "@/components/add-status";
 
-const StausTable = ({
+const StatusTable = ({
   statuses,
   company,
 }: {
-  statuses: ActiveStatusWithRecruit[];
+  statuses: ActiveStatusWithRecruit[] | ActiveStatusWithCommander[];
   company: Company;
 }) => {
   return (
@@ -39,22 +47,30 @@ const StausTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {statuses.map((status: ActiveStatusWithRecruit, index) => (
-            <TableRow key={status.endDate + index}>
-              <TableCell className="font-medium">
-                {status.recruit?.id} {status.recruit?.name}
-              </TableCell>
-              <TableCell>
-                {status.startDate} - {status.endDate}
-              </TableCell>
-              <TableCell className="text-right">
-                {status.type === "Other" || status.type === "CustomStatus"
-                  ? status.remarks
-                  : plusToString(status.type)}
-              </TableCell>
-              <CellEdit status={status} company={company} />
-            </TableRow>
-          ))}
+          {statuses.map(
+            (
+              status: ActiveStatusWithRecruit | ActiveStatusWithCommander,
+              index
+            ) => (
+              <TableRow key={status.endDate + index}>
+                <TableCell className="font-medium">
+                  {/* Check if it's a recruit or commander */}
+                  {"recruit" in status
+                    ? `${status.recruit?.id} ${status.recruit?.name}`
+                    : `${status.commander?.name}`}
+                </TableCell>
+                <TableCell>
+                  {status.startDate} - {status.endDate}
+                </TableCell>
+                <TableCell className="text-right">
+                  {status.type === "Other" || status.type === "CustomStatus"
+                    ? status.remarks
+                    : plusToString(status.type)}
+                </TableCell>
+                <CellEdit status={status} company={company} />
+              </TableRow>
+            )
+          )}
         </TableBody>
       </Table>
     </div>
@@ -88,6 +104,12 @@ const Page = async ({ params }: { params: { company: string } }) => {
     StatusType.MC,
   ]);
 
+  const commanderStatusList = await getCommanderActiveStatuses(
+    company.id,
+    [StatusType.CustomStatus, StatusType.LD, StatusType.MC],
+    true
+  );
+
   return (
     <PageWrapper className="flex flex-col items-center">
       <Tabs
@@ -95,21 +117,25 @@ const Page = async ({ params }: { params: { company: string } }) => {
         className="flex flex-col items-center my-4 lg:w-3/4 w-full"
       >
         <div className="relative w-full flex items-center">
-          <TabsList className="mx-auto">
+          <TabsList className="lg:mx-auto">
             <TabsTrigger value="All">All</TabsTrigger>
             <TabsTrigger value="Statuses">Statuses</TabsTrigger>
             <TabsTrigger value="Out of camp">Out of camp</TabsTrigger>
+            <TabsTrigger value="Commanders">CR</TabsTrigger>
           </TabsList>
-          <AddStatus company={params.company} />
+          <AddStatus company={params.company} commanders={company.commanders} />
         </div>
         <TabsContent value="All" className="w-full">
-          <StausTable statuses={allStatusesList} company={company} />
+          <StatusTable statuses={allStatusesList} company={company} />
         </TabsContent>
         <TabsContent value="Statuses" className="w-full">
-          <StausTable statuses={statusesList} company={company} />
+          <StatusTable statuses={statusesList} company={company} />
         </TabsContent>
         <TabsContent value="Out of camp" className="w-full">
-          <StausTable statuses={outOfCampList} company={company} />
+          <StatusTable statuses={outOfCampList} company={company} />
+        </TabsContent>
+        <TabsContent value="Commanders" className="w-full">
+          <StatusTable statuses={commanderStatusList} company={company} />
         </TabsContent>
       </Tabs>
     </PageWrapper>

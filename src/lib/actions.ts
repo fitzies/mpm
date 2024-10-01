@@ -29,9 +29,16 @@ export async function handleCreateStatus(data: FormData) {
 
   const company = data.get("company");
 
+  const commander = data.get("commander");
+
   // Check for correct inputs
 
-  if (!fourD || !status || !startDate || !endDate || !company) {
+  if (!commander && !fourD) {
+    console.log("Never input 4d/commander");
+    return "Please enter a correct 4d/commander";
+  }
+
+  if (!status || !startDate || !endDate || !company) {
     console.log("Form inputs wrong...");
     return "Please input the form correctly...";
   }
@@ -48,19 +55,38 @@ export async function handleCreateStatus(data: FormData) {
     return "Please input valid dates...";
   }
 
-  try {
-    await prisma.status.create({
-      data: {
-        recruitId: fourD.toString(),
-        startDate: startDate.toString(),
-        endDate: endDate.toString(),
-        type: _status,
-        remarks: remarks ?? "",
-      },
-    });
-  } catch (error) {
-    console.error(error);
-    return "Please enter an existing 4d...";
+  if (!fourD && commander) {
+    try {
+      await prisma.status.create({
+        data: {
+          commanderId: parseInt(commander.toString()),
+          startDate: startDate.toString(),
+          endDate: endDate.toString(),
+          type: _status,
+          remarks: remarks ?? "",
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      return "Please input an existing commander...";
+    }
+  }
+
+  if (fourD && !commander) {
+    try {
+      await prisma.status.create({
+        data: {
+          recruitId: fourD.toString(),
+          startDate: startDate.toString(),
+          endDate: endDate.toString(),
+          type: _status,
+          remarks: remarks ?? "",
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      return "Please enter an existing 4d...";
+    }
   }
 
   revalidatePath(`company/${company.toString().toLowerCase()}/statuses`);

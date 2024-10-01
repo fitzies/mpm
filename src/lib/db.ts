@@ -1,7 +1,10 @@
 import { StatusType } from "@prisma/client";
 import prisma from "./prisma";
 import { getSingaporeDate, parseDate } from "./utils";
-import { ActiveStatusWithRecruit } from "../../types";
+import {
+  ActiveStatusWithCommander,
+  ActiveStatusWithRecruit,
+} from "../../types";
 
 export const getCompany = async (company: string) => {
   return await prisma.company.findFirst({
@@ -180,4 +183,56 @@ export const deleteStatus = async (statusId: number) => {
 
 export const getRecruit = async (id: string) => {
   return await prisma.recruit.findFirst({ where: { id } });
+};
+
+export const getCommanders = async (companyId: number) => {
+  return await prisma.commander.findMany({ where: { companyId } });
+};
+
+export const getCommanderActiveStatuses = async (
+  companyId: number,
+  statuses: StatusType[],
+  plus: boolean = false
+): Promise<ActiveStatusWithCommander[]> => {
+  const sgTime = getSingaporeDate();
+
+  const _statuses = await prisma.status.findMany({
+    where: {
+      commander: { companyId },
+      type: { in: statuses },
+    },
+    include: {
+      commander: true,
+    },
+  });
+
+  // Filter and map to ActiveStatusWithRecruit
+  const activeStatuses: ActiveStatusWithCommander[] = _statuses
+    .filter((status) => {
+      const endDate = parseDate(status.endDate);
+      return endDate > sgTime; // Check if endDate is greater than current Singapore time
+    })
+    .map((status) => ({
+      id: status.id,
+      type: status.type,
+      startDate: status.startDate,
+      endDate: status.endDate,
+      commanderId: status.commanderId ? Number(status.commanderId) : null,
+      commander: status.commander
+        ? {
+            ...status.commander,
+            id: String(status.commander.id), // Convert commander.id to string
+          }
+        : null,
+      remarks: status.remarks ?? "",
+    }));
+
+  if (!plus) {
+  }
+  return activeStatuses; // Return the active statuses if plus is false
+
+  const plusStatuses = await getPlusStatuses(companyId);
+
+  // Concatenate the active statuses and plus statuses
+  // return activeStatuses.concat(plusStatuses);
 };

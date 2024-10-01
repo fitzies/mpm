@@ -18,13 +18,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { StatusType } from "@prisma/client";
+import { Commander, StatusType } from "@prisma/client";
 import { useState } from "react";
 import { handleCreateStatus } from "@/lib/actions";
+import { TabsList, TabsTrigger } from "./ui/tabs";
+import { Switch } from "./ui/switch";
 
-const AddStatus = ({ company }: { company: string }) => {
+const AddStatus = ({
+  company,
+  commanders,
+}: {
+  company: string;
+  commanders: Commander[];
+}) => {
   const [open, setOpen] = useState<boolean>();
   const [error, setError] = useState<string>();
+
+  const [isCommander, setIsCommander] = useState<boolean>(false);
+  const [commander, setCommander] = useState<string>();
 
   const [fourD, setFourD] = useState<string>("");
   const [status, setStatus] = useState<string>();
@@ -38,7 +49,11 @@ const AddStatus = ({ company }: { company: string }) => {
   );
 
   const formFilled = () => {
-    return fourD.length === 5 && startDate.length === 6 && endDate.length === 6;
+    return (
+      (fourD.length === 5 || commander) &&
+      startDate.length === 6 &&
+      endDate.length === 6
+    );
   };
 
   const openDialog = () => {
@@ -51,6 +66,11 @@ const AddStatus = ({ company }: { company: string }) => {
       setError(() => res);
     } else {
       setOpen(() => false);
+      setFourD(() => "");
+      setCommander(() => "");
+      setStatus(() => "");
+      setStartDate(() => "");
+      setEndDate(() => "");
     }
   };
 
@@ -84,21 +104,55 @@ const AddStatus = ({ company }: { company: string }) => {
             name="company"
             value={company}
           />
+
           <div className="flex flex-col gap-4 py-4 items-start w-full">
             <div className="flex items-center gap-12">
-              <Label htmlFor="4d">4d</Label>
-              <Input
-                id="4d"
-                name="4d"
-                placeholder="V1101"
-                className="col-span-3"
-                value={fourD}
-                maxLength={5}
-                pattern="[A-Za-z][0-9]{4}"
-                title="Please enter one letter followed by four numbers (e.g., V1201)"
-                onChange={(e) => setFourD(e.target.value)}
-              />
+              {!isCommander ? (
+                <Label htmlFor="4d">4d</Label>
+              ) : (
+                <Label htmlFor="CR">CR</Label>
+              )}
+              {!isCommander ? (
+                <Input
+                  id="4d"
+                  name="4d"
+                  placeholder="V1101"
+                  className="col-span-3"
+                  value={fourD}
+                  maxLength={5}
+                  pattern="[A-Za-z][0-9]{4}"
+                  title="Please enter one letter followed by four numbers (e.g., V1201)"
+                  onChange={(e) => setFourD(e.target.value)}
+                />
+              ) : (
+                <Select
+                  name="commander"
+                  value={commander}
+                  onValueChange={(e) => setCommander(() => e)}
+                >
+                  <SelectTrigger className="w-2/3">
+                    <SelectValue placeholder="Choose" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {commanders.map((commander) => {
+                      return (
+                        <SelectItem value={commander.id.toString()}>
+                          {commander.name}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              )}
+              <div className="flex gap-2 items-center">
+                <p className="text-sm text-zinc-400">Commander</p>
+                <Switch
+                  checked={isCommander}
+                  onCheckedChange={setIsCommander}
+                />
+              </div>
             </div>
+
             <div className="flex items-center gap-6">
               <Label htmlFor="status">Status</Label>
               <Select

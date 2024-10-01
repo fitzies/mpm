@@ -7,7 +7,10 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { TableCell } from "./ui/table";
-import { ActiveStatusWithRecruit } from "../../types";
+import {
+  ActiveStatusWithCommander,
+  ActiveStatusWithRecruit,
+} from "../../types";
 import { Company } from "@prisma/client";
 import { handleDeleteStatus } from "@/lib/actions";
 
@@ -15,7 +18,7 @@ const CellEdit = ({
   status,
   company,
 }: {
-  status: ActiveStatusWithRecruit;
+  status: ActiveStatusWithRecruit | ActiveStatusWithCommander;
   company: Company;
 }) => {
   return (
