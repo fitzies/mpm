@@ -1,4 +1,4 @@
-import { Status, StatusType } from "@prisma/client";
+import { StatusType } from "@prisma/client";
 import prisma from "./prisma";
 import { getSingaporeDate, parseDate } from "./utils";
 import { ActiveStatusWithRecruit } from "../../types";
@@ -120,9 +120,28 @@ export const getPlusStatuses = async (
     })
     .map((status) => {
       const endDate = parseDate(status.endDate);
-      const daysDifference = Math.floor(
-        sgTime.getUTCDate() - endDate.getUTCDate()
-      ); // Calculate the difference in days
+      // const timeDifference = sgTime.getTime() - endDate.getTime();
+      // const daysDifference = Math.floor(
+      //   sgTime.getUTCDate() - endDate.getUTCDate()
+      // ); // Calculate the difference in days
+      const sgTimeMidnight = new Date(
+        sgTime.getFullYear(),
+        sgTime.getMonth(),
+        sgTime.getDate()
+      );
+      const endDateMidnight = new Date(
+        endDate.getFullYear(),
+        endDate.getMonth(),
+        endDate.getDate()
+      );
+
+      // Get the difference in time (milliseconds)
+      const timeDifference =
+        sgTimeMidnight.getTime() - endDateMidnight.getTime();
+
+      // Convert the difference from milliseconds to days
+      const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+      // console.log(sgTimeMidnight, endDateMidnight);
 
       let updatedType = status.type;
 

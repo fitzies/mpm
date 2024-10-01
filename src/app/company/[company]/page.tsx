@@ -27,7 +27,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
     false
   );
 
-  const recruitsOnMcCount = await getRecruitsWithStatus(company.id, [
+  const recruitsOutOfCampStrength = await getRecruitsWithStatus(company.id, [
     StatusType.MC,
     StatusType.Other,
   ]);
@@ -64,7 +64,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
             title="Out of Camp"
             headers={{ left: "Recruit", right: "Reason" }}
             data={recruitsOnMC.slice(0, 5)}
-            length={recruitsOnMcCount}
+            length={recruitsOutOfCampStrength}
             href={`${params.company}/statuses`}
           />
         </div>
