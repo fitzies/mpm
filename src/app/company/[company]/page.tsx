@@ -27,10 +27,10 @@ const Page = async ({ params }: { params: { company: string } }) => {
     false
   );
 
-  const recruitsOutOfCampStrength = await getRecruitsWithStatus(company.id, [
-    StatusType.MC,
-    StatusType.Other,
-  ]);
+  // const recruitsOutOfCampStrength = await getRecruitsWithStatus(company.id, [
+  //   StatusType.MC,
+  //   StatusType.Other,
+  // ]);
 
   return (
     <PageWrapper className="flex min-h-screen flex-col">
