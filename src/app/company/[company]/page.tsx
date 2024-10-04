@@ -1,7 +1,7 @@
 import Chunk from "@/components/chunk";
 import Dashboard from "@/components/dashboard";
 import PageWrapper from "@/components/page-wrapper";
-import { getActiveStatuses, getCompany, getRecruitsWithStatus } from "@/lib/db";
+import { getActiveStatuses, getCompany } from "@/lib/db";
 import { getOutOfCampStrength, getPlatoonStrength } from "@/lib/utils";
 import { StatusType } from "@prisma/client";
 
