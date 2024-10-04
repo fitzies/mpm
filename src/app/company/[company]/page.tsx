@@ -64,7 +64,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
             title="Out of Camp"
             headers={{ left: "Recruit", right: "Reason" }}
             data={recruitsOnMC.slice(0, 5)}
-            length={recruitsOutOfCampStrength}
+            length={getOutOfCampStrength(company.recruits)}
             href={`${params.company}/statuses`}
           />
         </div>
