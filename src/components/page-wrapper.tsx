@@ -6,7 +6,7 @@ const PageWrapper = ({
   className?: string;
 }) => {
   return (
-    <div className={`w-[98vw] px-8 pb-12 pt-16 ${className}`}>{children}</div>
+    <div className={`w-[98vw] px-8 pb-12 pt-20 ${className}`}>{children}</div>
   );
 };
 

@@ -26,6 +26,9 @@ model Recruit {
   statuses   Status[]     // Recruits can have multiple statuses
   company    Company      @relation(fields: [companyId], references: [id])
   companyId  Int
+
+  polarAccessToken String?
+  polarUserId String?
 }
 
 model Commander {
@@ -34,6 +37,9 @@ model Commander {
   statuses   Status[]     // Commanders can have multiple statuses
   company    Company      @relation(fields: [companyId], references: [id])
   companyId  Int
+
+  polarAccessToken String?
+  polarUserId String?
 }
 
 model Status {

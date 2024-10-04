@@ -92,3 +92,26 @@ export async function handleCreateStatus(data: FormData) {
   revalidatePath(`company/${company.toString().toLowerCase()}/statuses`);
   return true;
 }
+
+export async function submitPolar(data: FormData) {
+  const fourD = data.get("4d")?.toString();
+  const accessToken = data.get("access-token")?.toString();
+  const userId = data.get("user-id")?.toString();
+
+  if (!fourD || !accessToken || !userId) {
+    console.log("No 4d or access token is given.");
+    console.log(fourD, accessToken, userId);
+    return "No 4d or access token is given.";
+  }
+
+  try {
+    await prisma.recruit.update({
+      where: { id: fourD },
+      data: { polarAccessToken: accessToken, polarUserId: userId },
+    });
+    return true;
+  } catch (error) {
+    console.log(error);
+    return "This 4D does not exist";
+  }
+}

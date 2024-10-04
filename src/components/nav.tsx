@@ -30,7 +30,7 @@ const Nav = () => {
   const pathname = usePathname();
 
   // Hide Nav if the pathname is just '/'
-  if (pathname === "/") {
+  if (pathname === "/" || pathname.includes("/polar")) {
     return null;
   }
 
@@ -41,7 +41,7 @@ const Nav = () => {
   const isDashboard = pathArr[1] === "company" && pathArr.length === 3; // company/{companyName}
   const isConducts = pathArr[1] === "company" && pathArr[3] === "conducts"; // company/{companyName}/conducts
   const isStatuses = pathArr[1] === "company" && pathArr[3] === "statuses"; // company/{companyName}/statuses
-  const isStrength = pathArr[1] === "company" && pathArr[3] === "strength"; // company/{companyName}/statuses
+  // const isStrength = pathArr[1] === "company" && pathArr[3] === "strength"; // company/{companyName}/statuses
 
   return (
     <div className="w-screen fixed px-8 py-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-6 bg-white dark:bg-zinc-950">
@@ -61,11 +61,11 @@ const Nav = () => {
         selected={isStatuses}
         href={`/company/${companyName}/statuses`}
       />
-      <NavItem
+      {/* <NavItem
         title="Strength"
         selected={isStrength}
         href={`/company/${companyName}/strength`}
-      />
+      /> */}
       {/* <div className="ml-auto text-sm">{getSingaporeDate().toUTCString()}</div> */}
     </div>
   );
