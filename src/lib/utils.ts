@@ -1,6 +1,11 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { CommanderWithStatuses, RecruitWithStatuses } from "../../types";
+import {
+  ActiveStatusWithCommander,
+  ActiveStatusWithRecruit,
+  CommanderWithStatuses,
+  RecruitWithStatuses,
+} from "../../types";
 import { getRecruits } from "./db";
 import { Recruit, StatusType } from "@prisma/client";
 
@@ -155,4 +160,32 @@ export const validDate = (date1: string, date2: string): boolean => {
 export function isWeekendOrMonday(date: Date) {
   const day = date.getDay();
   return day === 0 || day === 1 || day === 6;
+}
+
+export function filterResults(
+  query: string,
+  statuses: ActiveStatusWithRecruit[] | ActiveStatusWithCommander[]
+) {
+  query = query.toUpperCase();
+  if (Array.isArray(statuses)) {
+    // Check if it's an array of ActiveStatusWithRecruit
+    if (statuses.length > 0 && "recruit" in statuses[0]) {
+      return (statuses as ActiveStatusWithRecruit[]).filter(
+        (status) =>
+          status.recruit?.name.includes(query) ||
+          status.recruit?.id.includes(query) ||
+          status.type.includes(query)
+      );
+    }
+
+    // Check if it's an array of ActiveStatusWithCommander
+    if (statuses.length > 0 && "commander" in statuses[0]) {
+      return (statuses as ActiveStatusWithCommander[]).filter(
+        (status) =>
+          status.commander?.name.includes(query) || status.type.includes(query)
+      );
+    }
+  }
+
+  return statuses;
 }

@@ -20,16 +20,19 @@ import {
   ActiveStatusWithCommander,
   ActiveStatusWithRecruit,
 } from "../../../../../types";
-import { plusToString } from "@/lib/utils";
+import { filterResults, plusToString } from "@/lib/utils";
 import CellEdit from "@/components/cell-edit";
 import AddStatus from "@/components/add-status";
+import Search from "@/components/search";
 
 const StatusTable = ({
   statuses,
   company,
+  query,
 }: {
   statuses: ActiveStatusWithRecruit[] | ActiveStatusWithCommander[];
   company: Company;
+  query: string;
 }) => {
   return (
     <div>
@@ -46,7 +49,7 @@ const StatusTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {statuses.map(
+          {filterResults(query, statuses).map(
             (
               status: ActiveStatusWithRecruit | ActiveStatusWithCommander,
               index
@@ -76,7 +79,13 @@ const StatusTable = ({
   );
 };
 
-const Page = async ({ params }: { params: { company: string } }) => {
+const Page = async ({
+  params,
+  searchParams,
+}: {
+  params: { company: string };
+  searchParams: { query?: string; page?: string };
+}) => {
   const companyName =
     params.company.substring(0, 1).toUpperCase() + params.company.substring(1);
 
@@ -109,13 +118,16 @@ const Page = async ({ params }: { params: { company: string } }) => {
     true
   );
 
+  const query = searchParams?.query || "";
+
   return (
     <PageWrapper className="flex flex-col items-center">
       <Tabs
         defaultValue="All"
-        className="flex flex-col items-center my-4 lg:w-3/4 w-full"
+        className="flex flex-col items-center my-4 lg:w-5/6 w-full"
       >
-        <div className="relative w-full flex items-center">
+        <div className="relative w-full flex justify-between items-center">
+          <Search />
           <TabsList className="lg:mx-auto">
             <TabsTrigger value="All">All</TabsTrigger>
             <TabsTrigger value="Statuses">Statuses</TabsTrigger>
@@ -125,16 +137,32 @@ const Page = async ({ params }: { params: { company: string } }) => {
           <AddStatus company={params.company} commanders={company.commanders} />
         </div>
         <TabsContent value="All" className="w-full">
-          <StatusTable statuses={allStatusesList} company={company} />
+          <StatusTable
+            statuses={allStatusesList}
+            company={company}
+            query={query}
+          />
         </TabsContent>
         <TabsContent value="Statuses" className="w-full">
-          <StatusTable statuses={statusesList} company={company} />
+          <StatusTable
+            statuses={statusesList}
+            company={company}
+            query={query}
+          />
         </TabsContent>
         <TabsContent value="Out of camp" className="w-full">
-          <StatusTable statuses={outOfCampList} company={company} />
+          <StatusTable
+            statuses={outOfCampList}
+            company={company}
+            query={query}
+          />
         </TabsContent>
         <TabsContent value="Commanders" className="w-full">
-          <StatusTable statuses={commanderStatusList} company={company} />
+          <StatusTable
+            statuses={commanderStatusList}
+            company={company}
+            query={query}
+          />
         </TabsContent>
       </Tabs>
     </PageWrapper>
