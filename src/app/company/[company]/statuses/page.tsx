@@ -105,7 +105,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
 
   const commanderStatusList = await getCommanderActiveStatuses(
     company.id,
-    [StatusType.CustomStatus, StatusType.LD, StatusType.MC],
+    [StatusType.CustomStatus, StatusType.LD, StatusType.MC, StatusType.Other],
     true
   );
 
