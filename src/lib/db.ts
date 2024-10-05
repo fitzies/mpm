@@ -1,6 +1,6 @@
 import { StatusType } from "@prisma/client";
 import prisma from "./prisma";
-import { getSingaporeDate, parseDate } from "./utils";
+import { getSingaporeDate, isWeekendOrMonday, parseDate } from "./utils";
 import {
   ActiveStatusWithCommander,
   ActiveStatusWithRecruit,
@@ -235,4 +235,66 @@ export const getCommanderActiveStatuses = async (
 
   // Concatenate the active statuses and plus statuses
   // return activeStatuses.concat(plusStatuses);
+};
+
+export const getStatusesPerDate = async (
+  companyId: number
+): Promise<{ month: string; statuses: number; mcs: number }[]> => {
+  const statuses = await prisma.status.findMany({
+    where: { recruit: { companyId }, type: { in: ["CustomStatus", "LD"] } },
+  });
+
+  const mcs = await prisma.status.findMany({
+    where: { recruit: { companyId }, type: { in: ["MC"] } },
+  });
+
+  const data = [
+    { month: "September", statuses: 0, mcs: 0 },
+    { month: "October", statuses: 0, mcs: 0 },
+    { month: "November", statuses: 0, mcs: 0 },
+    { month: "December", statuses: 0, mcs: 0 },
+  ];
+
+  statuses.map((status) => {
+    if (status.startDate.substring(2, 4) === "09") {
+      data[0].statuses += 1;
+    } else if (status.startDate.substring(2, 4) === "10") {
+      data[1].statuses += 1;
+    } else if (status.startDate.substring(2, 4) === "11") {
+      data[2].statuses += 1;
+    } else if (status.startDate.substring(2, 4) === "12") {
+      data[3].statuses += 1;
+    }
+  });
+
+  mcs.map((mc) => {
+    if (mc.startDate.substring(2, 4) === "09") {
+      data[0].mcs += 1;
+    } else if (mc.startDate.substring(2, 4) === "10") {
+      data[1].mcs += 1;
+    } else if (mc.startDate.substring(2, 4) === "11") {
+      data[2].mcs += 1;
+    } else if (mc.startDate.substring(2, 4) === "12") {
+      data[3].mcs += 1;
+    }
+  });
+
+  return data;
+};
+
+export const getRSOCount = async (companyId: number) => {
+  const mcs = await prisma.status.findMany({
+    where: { recruit: { companyId }, type: "MC" },
+  });
+
+  let counter = 0;
+
+  mcs.map((mc) => {
+    const date = parseDate(mc.startDate);
+    if (isWeekendOrMonday(date)) {
+      counter += 1;
+    }
+  });
+
+  return counter;
 };

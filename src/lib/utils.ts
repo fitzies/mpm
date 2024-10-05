@@ -151,3 +151,8 @@ export const validDate = (date1: string, date2: string): boolean => {
   // Return false if either date is invalid or if date1 is not earlier than date2
   return dateObj1 !== null && dateObj2 !== null && dateObj1 <= dateObj2;
 };
+
+export function isWeekendOrMonday(date: Date) {
+  const day = date.getDay();
+  return day === 0 || day === 1 || day === 6;
+}

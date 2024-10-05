@@ -1,8 +1,17 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { DotIcon, Sparkles } from "lucide-react";
 import Link from "next/link"; // Import Link from next/link
 import { usePathname } from "next/navigation";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const NavItem = ({
   title,
@@ -44,7 +53,7 @@ const Nav = () => {
   // const isStrength = pathArr[1] === "company" && pathArr[3] === "strength"; // company/{companyName}/statuses
 
   return (
-    <div className="w-screen fixed px-8 py-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-6 bg-white dark:bg-zinc-950">
+    <div className="w-screen fixed px-8 py-3 z-50 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-6 bg-white dark:bg-zinc-950">
       <Sparkles className="lg:block hidden" />
       <NavItem
         title="Dashboard"
@@ -61,12 +70,25 @@ const Nav = () => {
         selected={isStatuses}
         href={`/company/${companyName}/statuses`}
       />
-      {/* <NavItem
-        title="Strength"
-        selected={isStrength}
-        href={`/company/${companyName}/strength`}
-      /> */}
-      {/* <div className="ml-auto text-sm">{getSingaporeDate().toUTCString()}</div> */}
+      <DropdownMenu>
+        <DropdownMenuTrigger className="ml-auto lg:mr-3">
+          <Avatar>
+            <AvatarFallback>
+              <DotIcon />
+            </AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>My Company</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {/* <DropdownMenuItem>My company</DropdownMenuItem> */}
+          <DropdownMenuItem asChild>
+            <Link href={`/company/${companyName}/insights`}>Insights</Link>
+          </DropdownMenuItem>
+          {/* <DropdownMenuItem>Nominal Roll</DropdownMenuItem> */}
+          {/* <DropdownMenuItem>Subscription</DropdownMenuItem> */}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };
