@@ -39,7 +39,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
           <Chunk
             title="Recruit Strength"
             body={`${
-              company.recruits.length - getOutOfCampStrength(company.recruits)
+              company.recruits.length - recruitsOnMC.length
             } / ${company.recruits.length.toString()}`}
           ></Chunk>
           <Chunk
@@ -64,7 +64,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
             title="Out of Camp"
             headers={{ left: "Recruit", right: "Reason" }}
             data={recruitsOnMC.slice(0, 5)}
-            length={getOutOfCampStrength(company.recruits)}
+            length={recruitsOnMC.length}
             href={`${params.company}/statuses`}
           />
         </div>
