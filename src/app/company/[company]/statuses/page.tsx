@@ -50,7 +50,11 @@ const StatusTable = ({
         </TableHeader>
         <TableBody>
           {filterResults(query, statuses)
-            .sort((a, b) => a.id - b.id) // Sort by id in ascending order
+            .sort((a, b) => {
+              const numA = parseInt(a.id.replace(/\D/g, ""), 10) || 0; // Extract number, fallback to 0 if no number
+              const numB = parseInt(b.id.replace(/\D/g, ""), 10) || 0;
+              return numB - numA; // Sort in descending order (for entire list)
+            })
             .map(
               (status: ActiveStatusWithRecruit | ActiveStatusWithCommander, index) => (
                 <TableRow key={status.endDate + index}>
@@ -72,6 +76,7 @@ const StatusTable = ({
                 </TableRow>
               )
             )}
+
 
         </TableBody>
       </Table>
