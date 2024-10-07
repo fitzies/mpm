@@ -49,30 +49,30 @@ const StatusTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filterResults(query, statuses).map(
-            (
-              status: ActiveStatusWithRecruit | ActiveStatusWithCommander,
-              index
-            ) => (
-              <TableRow key={status.endDate + index}>
-                <TableCell className="font-medium">
-                  {/* Check if it's a recruit or commander */}
-                  {"recruit" in status
-                    ? `${status.recruit?.id} ${status.recruit?.name}`
-                    : `${status.commander?.name}`}
-                </TableCell>
-                <TableCell>
-                  {status.startDate} - {status.endDate}
-                </TableCell>
-                <TableCell className="text-right">
-                  {status.type === "Other" || status.type === "CustomStatus"
-                    ? status.remarks
-                    : plusToString(status.type)}
-                </TableCell>
-                <CellEdit status={status} company={company} />
-              </TableRow>
-            )
-          )}
+          {filterResults(query, statuses)
+            .sort((a, b) => a.id - b.id) // Sort by id in ascending order
+            .map(
+              (status: ActiveStatusWithRecruit | ActiveStatusWithCommander, index) => (
+                <TableRow key={status.endDate + index}>
+                  <TableCell className="font-medium">
+                    {/* Check if it's a recruit or commander */}
+                    {"recruit" in status
+                      ? `${status.recruit?.id} ${status.recruit?.name}`
+                      : `${status.commander?.name}`}
+                  </TableCell>
+                  <TableCell>
+                    {status.startDate} - {status.endDate}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {status.type === "Other" || status.type === "CustomStatus"
+                      ? status.remarks
+                      : plusToString(status.type)}
+                  </TableCell>
+                  <CellEdit status={status} company={company} />
+                </TableRow>
+              )
+            )}
+
         </TableBody>
       </Table>
     </div>
