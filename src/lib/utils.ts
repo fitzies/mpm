@@ -35,6 +35,16 @@ export function parseDate(dateString: string): Date {
   return date;
 }
 
+export function getDate(): string {
+  const now = new Date();
+
+  const day = String(now.getDate()).padStart(2, "0"); // Get day and pad to 2 digits
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // Get month (0-indexed, so add 1)
+  const year = String(now.getFullYear()).slice(-2); // Get last two digits of the year
+
+  return `${day}${month}${year}`;
+}
+
 export function getOutOfCampStrength(
   arr: RecruitWithStatuses[] | CommanderWithStatuses[],
   platoon?: 1 | 2 | 3 | 4
@@ -110,13 +120,13 @@ export const getRecruitsOnStatus = async (
 };
 
 export const plusToString = (type: string): string => {
-  return type === StatusType.LDP1
+  return type === StatusType.LDP1 || type === "LDP1"
     ? "LD + 1"
-    : type === StatusType.LDP2
+    : type === StatusType.LDP2 || type === "LDP2"
     ? "LD + 2"
-    : type === StatusType.MCP1
+    : type === StatusType.MCP1 || type === "MCP1"
     ? "MC + 1"
-    : type === StatusType.MCP2
+    : type === StatusType.MCP2 || type === "MCP2"
     ? "MC + 2"
     : type; // Fallback if none of the types match
 };
@@ -241,12 +251,27 @@ export function getCountdown(): {
 } {
   const now = new Date();
   const target = new Date();
+  const day = now.getDay(); // Get the current day of the week (0 = Sunday, 6 = Saturday)
 
-  // Set the target to 09:00
-  target.setHours(9, 0, 0, 0);
+  if (day >= 1 && day <= 4) {
+    // Monday to Thursday: set target to 09:00
+    target.setHours(9, 0, 0, 0);
+  } else if (day === 5) {
+    // Friday: set target to 09:00
+    target.setHours(9, 0, 0, 0);
 
-  // If the current time is past 08:00, set the target to 08:00 the next day
-  if (now > target) {
+    // If current time is past Friday 09:00, set the target to Sunday 20:45
+    if (now > target) {
+      target.setDate(target.getDate() + 2); // Skip to Sunday
+      target.setHours(20, 45, 0, 0);
+    }
+  } else if (day === 0) {
+    // Sunday: set target to 20:45
+    target.setHours(20, 45, 0, 0);
+  }
+
+  // If the current time is past the target for any other day, set the target to the next day
+  if (now > target && day !== 5) {
     target.setDate(target.getDate() + 1);
   }
 
@@ -258,12 +283,18 @@ export function getCountdown(): {
   const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-  // Return the countdown as a string in "HH:MM:SS" format
-  // return `${hours.toString().padStart(2, "0")}:${minutes
-  //   .toString()
-  //   .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-
   return { hours, minutes, seconds };
 }
 
-//setCountdown(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+export function calculateDays(startDate: string, endDate: string): number {
+  const start = parseDate(startDate);
+  const end = parseDate(endDate);
+
+  // Calculate the difference in time (milliseconds)
+  const diffTime = end.getTime() - start.getTime();
+
+  // Convert the difference from milliseconds to days and add 1 to count the start day
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+  return diffDays;
+}

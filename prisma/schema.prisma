@@ -18,6 +18,8 @@ model Company {
   name       String      @unique
   recruits   Recruit[]
   commanders Commander[]
+
+  paradeStateSubmitted String?
 }
 
 model Recruit {

@@ -3,8 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { deleteStatus } from "./db";
 import prisma from "./prisma";
-import { getStatusType, validDate } from "./utils";
+import { getDate, getStatusType, validDate } from "./utils";
 import { StatusType } from "@prisma/client";
+import axios from "axios";
+import { paradeStateMessage } from "./parade-state-message";
 
 export const handleDeleteStatus = async (data: FormData) => {
   const statusId = data.get("statusId");
@@ -115,3 +117,55 @@ export async function submitPolar(data: FormData) {
     return "This 4D does not exist";
   }
 }
+
+export const handleSubmitParadeState = async (data: FormData) => {
+  const companyId = data.get("companyId");
+
+  if (!companyId) {
+    return "No company was provided";
+  }
+
+  const company = await prisma.company.findFirst({
+    where: { id: parseInt(companyId.toString()) },
+  });
+
+  if (!company) {
+    return "No company found";
+  }
+
+  if (company.paradeStateSubmitted === getDate()) {
+    return `${company.name} has already submitted their Parade State.`;
+  }
+
+  const botToken = process.env.TELEGRAM_BOT_TOKEN as string;
+  const chatId = process.env.TELEGRAM_CHAT_ID as string;
+
+  const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+  const text = await paradeStateMessage(company);
+
+  try {
+    // Send the message via the Telegram Bot API
+    const response = await axios.post(telegramUrl, {
+      chat_id: chatId,
+      text: text,
+    });
+
+    if (response.data.ok) {
+      await prisma.company.update({
+        where: {
+          id: parseInt(companyId.toString()), // Find the record by the company ID
+        },
+        data: {
+          paradeStateSubmitted: getDate(), // Update the `paradeStateSubmitted` field
+        },
+      });
+      return true;
+    } else {
+      return "Failed to send message, please try again later.";
+    }
+  } catch (error) {
+    console.error("Error sending message to Telegram:", error);
+    return "Error sending message, please try again later.";
+  }
+};
