@@ -34,6 +34,9 @@ const StatusTable = ({
   company: Company;
   query: string;
 }) => {
+
+  statuses = statuses.sort(sort_by_id())
+  
   return (
     <div>
       <Table>
@@ -50,25 +53,6 @@ const StatusTable = ({
         </TableHeader>
         <TableBody>
           {filterResults(query, statuses)
-            .sort((a, b) => {
-              let numA: number;
-              let numB: number;
-          
-              // Check if id is a number or string and handle accordingly
-              if (typeof a.id === "string") {
-                numA = parseInt(a.id.replace(/\D/g, ""), 10) || 0; // Extract number from string
-              } else {
-                numA = a.id; // If it's a number, use it directly
-              }
-          
-              if (typeof b.id === "string") {
-                numB = parseInt(b.id.replace(/\D/g, ""), 10) || 0; // Extract number from string
-              } else {
-                numB = b.id; // If it's a number, use it directly
-              }
-          
-              return numB - numA; // Sort in descending order
-            })
             .map(
               (status: ActiveStatusWithRecruit | ActiveStatusWithCommander, index) => (
                 <TableRow key={status.endDate + index}>
