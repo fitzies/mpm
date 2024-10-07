@@ -133,9 +133,9 @@ export const handleSubmitParadeState = async (data: FormData) => {
     return "No company found";
   }
 
-  if (company.paradeStateSubmitted === getDate()) {
-    return `${company.name} has already submitted their Parade State.`;
-  }
+  // if (company.paradeStateSubmitted === getDate()) {
+  //   return `${company.name} has already submitted their Parade State.`;
+  // }
 
   const botToken = process.env.TELEGRAM_BOT_TOKEN as string;
   const chatId = process.env.TELEGRAM_CHAT_ID as string;

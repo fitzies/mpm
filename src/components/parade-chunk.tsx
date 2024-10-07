@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
-import { getCountdown } from "@/lib/utils";
+import { getCountdown, getDate } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 import {
@@ -22,33 +22,54 @@ import {
 } from "@/components/ui/dialog";
 import { Company } from "@prisma/client";
 import { handleSubmitParadeState } from "@/lib/actions";
+import { useToast } from "@/hooks/use-toast";
 
 const SubmitParadeStateDialog = ({ company }: { company: Company }) => {
   const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+
+  const { toast } = useToast();
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <Button size="sm" asChild>
-        <DialogTrigger>Submit</DialogTrigger>
+        <DialogTrigger>Continue</DialogTrigger>
       </Button>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Are you sure you want to submit.</DialogTitle>
           <DialogDescription>
-            <p>
-              Once you submit, you will not be able to re-submit for the day.
-            </p>
+            Your Parade State will be forwarded to be publicly viewed.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <form
             className="flex items-center justify-between w-full"
-            action={async (data: FormData) => {
-              const res = await handleSubmitParadeState(data);
-              if (res === true) {
-                console.log("Submitted successfully");
-              } else {
-                setError(() => res);
+            onSubmit={async (e) => {
+              e.preventDefault(); // Prevent default form submission
+              setLoading(true); // Set loading state before async call
+              const data = new FormData(e.target as HTMLFormElement);
+              try {
+                const res = await handleSubmitParadeState(data);
+                if (res === true) {
+                  console.log("Submitted successfully");
+                  setLoading(false); // Set loading to false after success
+                  toast({
+                    title: "Parade State Submitted",
+                    description: `${
+                      company.name
+                    }'s Parade State has been submitted for ${getDate()}`,
+                  });
+                  setOpen(() => false);
+                } else {
+                  setError(res); // Set error if submission fails
+                  setLoading(false); // Set loading to false after error
+                }
+              } catch (error) {
+                console.error(error);
+                setError("Submission failed"); // Handle any unexpected errors
+                setLoading(false); // Set loading to false in case of errors
               }
             }}
           >
@@ -59,7 +80,7 @@ const SubmitParadeStateDialog = ({ company }: { company: Company }) => {
               name="companyId"
             />
             <p className="text-sm text-red-400 text-left">{error}</p>
-            <Button>Confirm</Button>
+            <Button disabled={loading}>{loading ? "..." : "Confirm"}</Button>
           </form>
         </DialogFooter>
       </DialogContent>
