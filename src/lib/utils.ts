@@ -190,7 +190,7 @@ export function filterResults(
   return statuses;
 }
 
-function sort_by_id() {
+export function sort_by_id() {
         return function (elem1, elem2) {
           if (elem1.id < elem2.id) {
             return -1;
