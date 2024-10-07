@@ -242,8 +242,8 @@ export function getCountdown(): {
   const now = new Date();
   const target = new Date();
 
-  // Set the target to 08:00
-  target.setHours(8, 0, 0, 0);
+  // Set the target to 09:00
+  target.setHours(9, 0, 0, 0);
 
   // If the current time is past 08:00, set the target to 08:00 the next day
   if (now > target) {
