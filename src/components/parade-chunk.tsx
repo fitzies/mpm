@@ -18,9 +18,9 @@ const ParadeChunk = ({ company }: { company: string }) => {
     const updateCountdown = () => {
       const { hours, minutes } = getCountdown();
       setCountdown(
-        `${hours.toString().padStart(2, "0")}:${minutes
+        `${hours.toString().padStart(2, "0")} hours and ${minutes
           .toString()
-          .padStart(2, "0")}`
+          .padStart(2, "0")} minutes`
       );
     };
 
