@@ -42,33 +42,34 @@ const paradeMessage = async (
   const currentCommanderStrength =
     company!.commanders.length - getOutOfCampStrength(company!.commanders);
 
-  return `${company.name} Parade State ${getDate()}
+  return [
+    `${company.name} Parade State ${getDate()}
 
 Total Recruit Strength: ${totalRecruitStrength}
-Current Recruit Strength: ${currentRecruitStrength}
+Current Recruit Strength: ${currentRecruitStrength}`,
 
-MC (${Object.values(mcMap).length.toString()}):
+    `MC (${Object.values(mcMap).length.toString()}):
 ${Object.entries(mcMap)
   .map(([key, values]) => {
     return `${key}\n${values.map((value) => `\t• ${value}`).join("\n")}`; // Using two spaces instead of '\t'
   })
-  .join("\n\n")}
+  .join("\n\n")}`,
 
-Statuses (${Object.values(statusMap).length.toString()}):
+    `Statuses (${Object.values(statusMap).length.toString()}):
 ${Object.entries(statusMap)
   .map(([key, values]) => {
     return `${key}\n${values.map((value) => `\t• ${value}`).join("\n")}`; // Using two spaces instead of '\t'
   })
-  .join("\n\n")}
+  .join("\n\n")}`,
 
-Other (${Object.values(otherMap).length.toString()}):
+    `Other (${Object.values(otherMap).length.toString()}):
 ${Object.entries(otherMap)
   .map(([key, values]) => {
     return `${key}\n${values.map((value) => `\t• ${value}`).join("\n")}`; // Using two spaces instead of '\t'
   })
-  .join("\n\n")}
+  .join("\n\n")}`,
 
-Commanders Total: ${totalCommanderStrength}
+    `Commanders Total: ${totalCommanderStrength}
 Commanders Present: ${currentCommanderStrength}
 
 Commanders (${Object.values(commanderMap).length.toString()}):
@@ -78,7 +79,8 @@ ${Object.entries(commanderMap)
   })
   .join("\n\n")}
 
-`;
+`,
+  ];
 };
 
 const turnToKV = (arr: ActiveStatusWithRecruit[]) => {

@@ -142,28 +142,38 @@ export const handleSubmitParadeState = async (data: FormData) => {
 
   const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
-  const text = await paradeStateMessage(company);
-
   try {
-    // Send the message via the Telegram Bot API
-    const response = await axios.post(telegramUrl, {
-      chat_id: chatId,
-      text: text,
+    const textList = await paradeStateMessage(company);
+
+    // Check for error in message generation
+    if (!textList || textList === "Error") {
+      return "Failed to generate message.";
+    }
+
+    // Send all messages in sequence using for...of loop
+    for (const text of textList) {
+      const response = await axios.post(telegramUrl, {
+        chat_id: chatId,
+        text: text,
+      });
+
+      // Check if message sending was successful
+      if (!response.data.ok) {
+        return "Failed to send message, please try again later.";
+      }
+    }
+
+    // If all messages were sent successfully, update the paradeStateSubmitted field
+    await prisma.company.update({
+      where: {
+        id: parseInt(companyId.toString()), // Find the record by the company ID
+      },
+      data: {
+        paradeStateSubmitted: getDate(), // Update the paradeStateSubmitted field
+      },
     });
 
-    if (response.data.ok) {
-      await prisma.company.update({
-        where: {
-          id: parseInt(companyId.toString()), // Find the record by the company ID
-        },
-        data: {
-          paradeStateSubmitted: getDate(), // Update the `paradeStateSubmitted` field
-        },
-      });
-      return true;
-    } else {
-      return "Failed to send message, please try again later.";
-    }
+    return true;
   } catch (error) {
     console.error("Error sending message to Telegram:", error);
     return "Error sending message, please try again later.";
