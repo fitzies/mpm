@@ -25,6 +25,8 @@ import CellEdit from "@/components/cell-edit";
 import AddStatus from "@/components/add-status";
 import Search from "@/components/search";
 
+import { sort_by_id } from "@/lib/utils";
+
 const StatusTable = ({
   statuses,
   company,
