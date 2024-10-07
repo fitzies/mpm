@@ -51,21 +51,20 @@ const StatusTable = ({
         <TableBody>
           {filterResults(query, statuses)
             .sort((a, b) => {
-              const isNumA = typeof a.id === "number"; // Check if id is a number
-              const isNumB = typeof b.id === "number";
+              let numA: number;
+              let numB: number;
           
-              let numA, numB;
-          
-              if (isNumA) {
-                numA = a.id; // If it's a number, use it directly
-              } else {
+              // Check if id is a number or string and handle accordingly
+              if (typeof a.id === "string") {
                 numA = parseInt(a.id.replace(/\D/g, ""), 10) || 0; // Extract number from string
+              } else {
+                numA = a.id; // If it's a number, use it directly
               }
           
-              if (isNumB) {
-                numB = b.id; // If it's a number, use it directly
-              } else {
+              if (typeof b.id === "string") {
                 numB = parseInt(b.id.replace(/\D/g, ""), 10) || 0; // Extract number from string
+              } else {
+                numB = b.id; // If it's a number, use it directly
               }
           
               return numB - numA; // Sort in descending order
@@ -91,6 +90,7 @@ const StatusTable = ({
                 </TableRow>
               )
             )}
+
 
 
 
