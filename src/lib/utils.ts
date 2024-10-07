@@ -190,14 +190,21 @@ export function filterResults(
   return statuses;
 }
 
+type Element = {
+  id: string | number;
+};
+
 export function sort_by_id() {
-        return function (elem1, elem2) {
-          if (elem1.id < elem2.id) {
-            return -1;
-          } else if (elem1.id > elem2.id) {
-            return 1;
-          } else {
-            return 0;
-          }
-        };
-      }
+  return function (elem1: Element, elem2: Element): number {
+    const id1 = typeof elem1.id === 'string' ? elem1.id : String(elem1.id);
+    const id2 = typeof elem2.id === 'string' ? elem2.id : String(elem2.id);
+
+    if (id1 < id2) {
+      return -1;
+    } else if (id1 > id2) {
+      return 1;
+    } else {
+      return 0;
+    }
+  };
+}
