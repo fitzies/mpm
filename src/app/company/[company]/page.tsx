@@ -1,6 +1,7 @@
 import Chunk from "@/components/chunk";
 import Dashboard from "@/components/dashboard";
 import PageWrapper from "@/components/page-wrapper";
+import ParadeChunk from "@/components/parade-chunk";
 import { getActiveStatuses, getCompany } from "@/lib/db";
 import { getOutOfCampStrength, getPlatoonStrength } from "@/lib/utils";
 import { StatusType } from "@prisma/client";
@@ -98,6 +99,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
               getOutOfCampStrength(company.recruits, 4)
             } / ${getPlatoonStrength(company.recruits, 4)}`}
           />
+          <ParadeChunk company={company.name} />
         </div>
       </main>
     </PageWrapper>

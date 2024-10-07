@@ -190,15 +190,40 @@ export function filterResults(
   return statuses;
 }
 
-type Element = {
-  id: string | number;
-};
+export function sort_by_name() {
+  return function (
+    elem1: ActiveStatusWithRecruit | ActiveStatusWithCommander,
+    elem2: ActiveStatusWithRecruit | ActiveStatusWithCommander
+  ): number {
+    // let name1: string = "";
+    // let name2: string = "";
+    let id1: string = "";
+    let id2: string = "";
 
-export function sort_by_id() {
-  return function (elem1: Element, elem2: Element): number {
-    const id1 = typeof elem1.id === 'string' ? elem1.id : String(elem1.id);
-    const id2 = typeof elem2.id === 'string' ? elem2.id : String(elem2.id);
+    if ("recruit" in elem1 && elem1.recruit) {
+      // name1 = elem1.recruit.name; // Access name from ActiveStatusWithRecruit
+      id1 = elem1.recruit.id; // Access name from ActiveStatusWithRecruit
+    } else if ("commander" in elem1 && elem1.commander) {
+      // name1 = elem1.commander.name; // Access name from ActiveStatusWithCommander
+      id1 = elem1.commander.id; // Access name from ActiveStatusWithCommander
+    }
 
+    if ("recruit" in elem2 && elem2.recruit) {
+      // name2 = elem2.recruit.name; // Access name from ActiveStatusWithRecruit
+      id2 = elem2.recruit.id; // Access name from ActiveStatusWithRecruit
+    } else if ("commander" in elem2 && elem2.commander) {
+      // name2 = elem2.commander.name; // Access name from ActiveStatusWithCommander
+      id2 = elem2.commander.id; // Access name from ActiveStatusWithCommander
+    }
+
+    //   if (name1 < name2) {
+    //     return -1;
+    //   } else if (name1 > name2) {
+    //     return 1;
+    //   } else {
+    //     return 0;
+    //   }
+    // };
     if (id1 < id2) {
       return -1;
     } else if (id1 > id2) {
@@ -208,3 +233,37 @@ export function sort_by_id() {
     }
   };
 }
+
+export function getCountdown(): {
+  hours: number;
+  minutes: number;
+  seconds: number;
+} {
+  const now = new Date();
+  const target = new Date();
+
+  // Set the target to 08:00
+  target.setHours(8, 0, 0, 0);
+
+  // If the current time is past 08:00, set the target to 08:00 the next day
+  if (now > target) {
+    target.setDate(target.getDate() + 1);
+  }
+
+  // Calculate the difference in milliseconds
+  const difference = target.getTime() - now.getTime();
+
+  // Convert the difference to hours, minutes, and seconds
+  const hours = Math.floor(difference / (1000 * 60 * 60));
+  const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+  // Return the countdown as a string in "HH:MM:SS" format
+  // return `${hours.toString().padStart(2, "0")}:${minutes
+  //   .toString()
+  //   .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+  return { hours, minutes, seconds };
+}
+
+//setCountdown(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
