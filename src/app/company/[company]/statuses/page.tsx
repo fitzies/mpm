@@ -51,9 +51,24 @@ const StatusTable = ({
         <TableBody>
           {filterResults(query, statuses)
             .sort((a, b) => {
-              const numA = parseInt(a.id.replace(/\D/g, ""), 10) || 0; // Extract number, fallback to 0 if no number
-              const numB = parseInt(b.id.replace(/\D/g, ""), 10) || 0;
-              return numB - numA; // Sort in descending order (for entire list)
+              const isNumA = typeof a.id === "number"; // Check if id is a number
+              const isNumB = typeof b.id === "number";
+          
+              let numA, numB;
+          
+              if (isNumA) {
+                numA = a.id; // If it's a number, use it directly
+              } else {
+                numA = parseInt(a.id.replace(/\D/g, ""), 10) || 0; // Extract number from string
+              }
+          
+              if (isNumB) {
+                numB = b.id; // If it's a number, use it directly
+              } else {
+                numB = parseInt(b.id.replace(/\D/g, ""), 10) || 0; // Extract number from string
+              }
+          
+              return numB - numA; // Sort in descending order
             })
             .map(
               (status: ActiveStatusWithRecruit | ActiveStatusWithCommander, index) => (
@@ -76,6 +91,7 @@ const StatusTable = ({
                 </TableRow>
               )
             )}
+
 
 
         </TableBody>
