@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/parade-state",
+      "schedule": "0 1 * * 1-5"
+    },
+    {
+      "path": "/api/parade-state",
+      "schedule": "45 12 * * 0"
+    }
+  ]
+}

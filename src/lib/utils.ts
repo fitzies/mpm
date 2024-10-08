@@ -7,7 +7,10 @@ import {
   RecruitWithStatuses,
 } from "../../types";
 import { getRecruits } from "./db";
-import { Recruit, StatusType } from "@prisma/client";
+import { Company, Recruit, StatusType } from "@prisma/client";
+import { paradeStateMessage } from "./parade-state-message";
+import axios from "axios";
+import prisma from "./prisma";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -298,3 +301,47 @@ export function calculateDays(startDate: string, endDate: string): number {
 
   return diffDays;
 }
+
+export const sendTelegramState = async (company: Company) => {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN as string;
+  const chatId = process.env.TELEGRAM_CHAT_ID as string;
+
+  const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+  try {
+    const textList = await paradeStateMessage(company);
+
+    // Check for error in message generation
+    if (!textList || textList === "Error") {
+      return "Failed to generate message.";
+    }
+
+    // Send all messages in sequence using for...of loop
+    for (const text of textList) {
+      const response = await axios.post(telegramUrl, {
+        chat_id: chatId,
+        text: text,
+      });
+
+      // Check if message sending was successful
+      if (!response.data.ok) {
+        return "Failed to send message, please try again later.";
+      }
+    }
+
+    // If all messages were sent successfully, update the paradeStateSubmitted field
+    await prisma.company.update({
+      where: {
+        id: company.id, // Find the record by the company ID
+      },
+      data: {
+        paradeStateSubmitted: getDate(), // Update the paradeStateSubmitted field
+      },
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error sending message to Telegram:", error);
+    return "Error sending message, please try again later.";
+  }
+};
