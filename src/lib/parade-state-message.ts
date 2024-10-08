@@ -48,21 +48,21 @@ const paradeMessage = async (
 Total Recruit Strength: ${totalRecruitStrength}
 Current Recruit Strength: ${currentRecruitStrength}`,
 
-    `MC (${Object.values(mcMap).length.toString()}):
+    `MC (${Object.keys(mcMap).length.toString()}):
 ${Object.entries(mcMap)
   .map(([key, values]) => {
     return `${key}\n${values.map((value) => `\t• ${value}`).join("\n")}`; // Using two spaces instead of '\t'
   })
   .join("\n\n")}`,
 
-    `Statuses (${Object.values(statusMap).length.toString()}):
+    `Statuses (${Object.keys(statusMap).length.toString()}):
 ${Object.entries(statusMap)
   .map(([key, values]) => {
     return `${key}\n${values.map((value) => `\t• ${value}`).join("\n")}`; // Using two spaces instead of '\t'
   })
   .join("\n\n")}`,
 
-    `Other (${Object.values(otherMap).length.toString()}):
+    `Other (${Object.keys(otherMap).length.toString()}):
 ${Object.entries(otherMap)
   .map(([key, values]) => {
     return `${key}\n${values.map((value) => `\t• ${value}`).join("\n")}`; // Using two spaces instead of '\t'
@@ -72,7 +72,7 @@ ${Object.entries(otherMap)
     `Commanders Total: ${totalCommanderStrength}
 Commanders Present: ${currentCommanderStrength}
 
-Commanders (${Object.values(commanderMap).length.toString()}):
+Commanders (${Object.keys(commanderMap).length.toString()}):
 ${Object.entries(commanderMap)
   .map(([key, values]) => {
     return `${key}\n${values.map((value) => `\t• ${value}`).join("\n")}`; // Using two spaces instead of '\t'
