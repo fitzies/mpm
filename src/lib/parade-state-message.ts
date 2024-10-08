@@ -50,22 +50,28 @@ Current Recruit Strength: ${currentRecruitStrength}`,
 
     `MC (${Object.keys(mcMap).length.toString()}):
 ${Object.entries(mcMap)
-  .map(([key, values]) => {
-    return `${key}\n${values.map((value) => `\t• ${value}`).join("\n")}`; // Using two spaces instead of '\t'
+  .map(([key, values], index) => {
+    return `${index + 1} ${key}\n${values
+      .map((value) => `\t• ${value}`)
+      .join("\n")}`; // Using two spaces instead of '\t'
   })
   .join("\n\n")}`,
 
     `Statuses (${Object.keys(statusMap).length.toString()}):
 ${Object.entries(statusMap)
-  .map(([key, values]) => {
-    return `${key}\n${values.map((value) => `\t• ${value}`).join("\n")}`; // Using two spaces instead of '\t'
+  .map(([key, values], index) => {
+    return `${index + 1} ${key}\n${values
+      .map((value) => `\t• ${value}`)
+      .join("\n")}`; // Using two spaces instead of '\t'
   })
   .join("\n\n")}`,
 
     `Other (${Object.keys(otherMap).length.toString()}):
 ${Object.entries(otherMap)
-  .map(([key, values]) => {
-    return `${key}\n${values.map((value) => `\t• ${value}`).join("\n")}`; // Using two spaces instead of '\t'
+  .map(([key, values], index) => {
+    return `${index + 1} ${key}\n${values
+      .map((value) => `\t• ${value}`)
+      .join("\n")}`; // Using two spaces instead of '\t'
   })
   .join("\n\n")}`,
 
@@ -74,8 +80,10 @@ Commanders Present: ${currentCommanderStrength}
 
 Commanders (${Object.keys(commanderMap).length.toString()}):
 ${Object.entries(commanderMap)
-  .map(([key, values]) => {
-    return `${key}\n${values.map((value) => `\t• ${value}`).join("\n")}`; // Using two spaces instead of '\t'
+  .map(([key, values], index) => {
+    return `${index + 1} ${key}\n${values
+      .map((value) => `\t• ${value}`)
+      .join("\n")}`; // Using two spaces instead of '\t'
   })
   .join("\n\n")}
 
@@ -87,9 +95,10 @@ const turnToKV = (arr: ActiveStatusWithRecruit[]) => {
   const map: { [key: string]: string[] } = {};
   const plusOne = ["MCP1", "MCP2", "LDP1", "LDP2"];
 
-  arr.forEach((status, index) => {
+  arr.forEach((status) => {
     if (status.recruit && status.recruitId !== null) {
-      const key = `${index + 1}. ${status.recruit.id} ${status.recruit.name}`;
+      // Use recruit id and name as the key, no index
+      const key = `${status.recruit.id} ${status.recruit.name}`;
 
       if (!map[key]) {
         map[key] = [];
@@ -115,9 +124,10 @@ const commanderTurnToKV = (arr: ActiveStatusWithCommander[]) => {
   const map: { [key: string]: string[] } = {};
   const plusOne = ["MCP1", "MCP2", "LDP1", "LDP2"];
 
-  arr.forEach((status, index) => {
+  arr.forEach((status) => {
     if (status.commander && status.commander !== null) {
-      const key = `${index + 1}. ${status.commander.name}`;
+      // Use only the commander name as the key, without the index
+      const key = `${status.commander.name}`;
 
       if (!map[key]) {
         map[key] = [];
