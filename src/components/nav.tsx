@@ -85,9 +85,9 @@ const Nav = () => {
         <DropdownMenuContent>
           <DropdownMenuLabel>Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
+          {/* <DropdownMenuItem asChild>
             <Link href={`/profile`}>Profile</Link>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem asChild>
             <Link href={`/company/${companyName}/insights`}>
               Company Insights
