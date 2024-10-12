@@ -43,3 +43,10 @@ interface ActiveStatusWithCommander {
 //   recruitId: number | null; // Allow recruitId to be null
 //   recruit: Recruit | null; // Recruit can also be null
 // }
+
+interface SessionData {
+  // Define the structure of your session data
+  userId: number;
+  username: string;
+  // Add other fields as necessary
+}

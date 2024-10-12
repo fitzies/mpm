@@ -1,6 +1,6 @@
 "use client";
 
-import { DotIcon, Sparkles } from "lucide-react";
+import { Sparkles, User } from "lucide-react";
 import Link from "next/link"; // Import Link from next/link
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -39,7 +39,11 @@ const Nav = () => {
   const pathname = usePathname();
 
   // Hide Nav if the pathname is just '/'
-  if (pathname === "/" || pathname.includes("/polar")) {
+  if (
+    pathname === "/" ||
+    pathname.includes("/polar") ||
+    pathname.includes("/login")
+  ) {
     return null;
   }
 
@@ -74,19 +78,21 @@ const Nav = () => {
         <DropdownMenuTrigger className="ml-auto lg:mr-3">
           <Avatar>
             <AvatarFallback>
-              <DotIcon />
+              <User className="scale-90" />
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>My Company</DropdownMenuLabel>
+          <DropdownMenuLabel>Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {/* <DropdownMenuItem>My company</DropdownMenuItem> */}
           <DropdownMenuItem asChild>
-            <Link href={`/company/${companyName}/insights`}>Insights</Link>
+            <Link href={`/profile`}>Profile</Link>
           </DropdownMenuItem>
-          {/* <DropdownMenuItem>Nominal Roll</DropdownMenuItem> */}
-          {/* <DropdownMenuItem>Subscription</DropdownMenuItem> */}
+          <DropdownMenuItem asChild>
+            <Link href={`/company/${companyName}/insights`}>
+              Company Insights
+            </Link>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

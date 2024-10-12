@@ -1,12 +1,15 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { deleteStatus } from "./db";
 import prisma from "./prisma";
-import { getDate, getStatusType, validDate } from "./utils";
+import { decrypt, encrypt, getDate, getStatusType, validDate } from "./utils";
 import { StatusType } from "@prisma/client";
 import axios from "axios";
 import { paradeStateMessage } from "./parade-state-message";
+import { signIn } from "./auth";
+import { SessionData } from "../../types";
 
 export const handleDeleteStatus = async (data: FormData) => {
   const statusId = data.get("statusId");
@@ -179,3 +182,24 @@ export const handleSubmitParadeState = async (data: FormData) => {
     return "Error sending message, please try again later.";
   }
 };
+
+export async function handleLogin(sessionData: SessionData): Promise<void> {
+  const encryptedSessionData = encrypt(
+    JSON.stringify(sessionData),
+    process.env.ENCRYPTED_KEY!
+  ); // Encrypt your session data
+  cookies().set("session", encryptedSessionData, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    path: "/",
+  });
+  // Redirect or handle the response after setting the cookie
+}
+
+export async function getSessionData() {
+  const encryptedSessionData = cookies().get("session")?.value;
+  return encryptedSessionData
+    ? JSON.parse(decrypt(encryptedSessionData, process.env.ENCRYPTED_KEY!))
+    : null;
+}

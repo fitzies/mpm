@@ -345,3 +345,31 @@ export const sendTelegramState = async (company: Company) => {
     return "Error sending message, please try again later.";
   }
 };
+
+export function encrypt(plaintext: string, key: string): string {
+  let result = "";
+
+  for (let i = 0; i < plaintext.length; i++) {
+    // XOR each character with the key character (repeating the key as necessary)
+    result += String.fromCharCode(
+      plaintext.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+    );
+  }
+
+  // Convert the result to a string that can be safely transmitted
+  return Buffer.from(result, "binary").toString("base64");
+}
+
+export function decrypt(encryptedText: string, key: string): string {
+  const binaryString = Buffer.from(encryptedText, "base64").toString("binary");
+  let result = "";
+
+  for (let i = 0; i < binaryString.length; i++) {
+    // XOR each character with the key character (repeating the key as necessary)
+    result += String.fromCharCode(
+      binaryString.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+    );
+  }
+
+  return result;
+}

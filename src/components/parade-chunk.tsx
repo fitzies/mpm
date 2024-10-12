@@ -122,9 +122,9 @@ const ParadeChunk = ({ company }: { company: Company }) => {
           <Link href={`${company}/statuses`}>Edit Statuses</Link>
           </Button> */}
         <SubmitParadeStateDialog company={company} />
-        <p className="text-sm text-zinc-400 italic">
+        {/* <p className="text-sm text-zinc-400 italic">
           Will auto-submit in {countdown}
-        </p>
+        </p> */}
       </CardContent>
     </Card>
   );

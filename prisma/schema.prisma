@@ -42,6 +42,9 @@ model Commander {
 
   polarAccessToken String?
   polarUserId String?
+
+  username String @unique
+  password String
 }
 
 model Status {

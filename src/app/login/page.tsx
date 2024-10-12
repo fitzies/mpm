@@ -1,9 +1,10 @@
+import { LoginForm } from "@/components/login-form";
 import PageWrapper from "@/components/page-wrapper";
 
-const Page = async () => {
+const Page = ({ params }: { params: { slug: string } }) => {
   return (
     <PageWrapper className="flex justify-center items-center h-screen">
-      <div>Coming soon...</div>
+      <LoginForm />
     </PageWrapper>
   );
 };
