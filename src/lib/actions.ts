@@ -36,6 +36,16 @@ export async function handleCreateStatus(data: FormData) {
 
   const commander = data.get("commander");
 
+  const encryptedSessionData =
+    cookies().get("session")?.value ??
+    JSON.stringify({
+      userId: -1,
+    });
+
+  const createdBy = JSON.parse(
+    decrypt(encryptedSessionData, process.env.ENCRYPTED_KEY!)
+  ).userId;
+
   // Check for correct inputs
 
   if (!commander && !fourD) {
@@ -69,6 +79,7 @@ export async function handleCreateStatus(data: FormData) {
           endDate: endDate.toString(),
           type: _status,
           remarks: remarks ?? "",
+          createdById: createdBy,
         },
       });
     } catch (error) {
@@ -86,6 +97,7 @@ export async function handleCreateStatus(data: FormData) {
           endDate: endDate.toString(),
           type: _status,
           remarks: remarks ?? "",
+          createdById: 1,
         },
       });
     } catch (error) {

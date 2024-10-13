@@ -57,6 +57,9 @@ model Status {
   commander   Commander?  @relation(fields: [commanderId], references: [id]) // Nullable to allow either recruitId or commanderId
   commanderId Int?        // Nullable to allow either recruitId or commanderId
   remarks String?
+
+  createdAt DateTime @default(now())
+  createdById Int? 
 }
 
 enum StatusType {

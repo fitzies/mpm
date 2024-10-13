@@ -1,5 +1,4 @@
 import type { NextRequest } from "next/server";
-import { decrypt } from "./lib/utils";
 
 export function middleware(request: NextRequest) {
   const session = request.cookies.get("session")?.value;

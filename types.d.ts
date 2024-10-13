@@ -8,14 +8,6 @@ type CommanderWithStatuses = Commander & {
   statuses: Status[];
 };
 
-// interface BaseStatusWithRecruit {
-//   id: number; // Status ID
-//   type: string; // Status type (e.g., "MC", "Other")
-//   startDate: string; // Start date in ddmmyy format
-//   endDate: string; // End date in ddmmyy format
-//   remarks?: string;
-// }
-
 interface ActiveStatusWithRecruit {
   id: number; // Status ID
   type: string; // Status type (e.g., "MC", "Other")

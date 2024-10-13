@@ -22,6 +22,7 @@ import {
 } from "../../../../../types";
 import { filterResults, plusToString } from "@/lib/utils";
 import CellEdit from "@/components/cell-edit";
+// import AddStatus from "@/components/add-status";
 import AddStatus from "@/components/add-status";
 import Search from "@/components/search";
 
@@ -139,6 +140,7 @@ const Page = async ({
             <TabsTrigger value="Commanders">CR</TabsTrigger>
           </TabsList>
           <AddStatus company={params.company} commanders={company.commanders} />
+          {/* <AddStatus /> */}
         </div>
         <TabsContent value="All" className="w-full">
           <StatusTable
