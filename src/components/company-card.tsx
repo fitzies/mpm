@@ -6,13 +6,19 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 
-const CompanyCard = ({ company }: { company: string }) => {
+const CompanyCard = ({
+  company,
+  description,
+}: {
+  company: string;
+  description: string;
+}) => {
   return (
     <Link href={`/company/${company.toLowerCase()}`}>
       <Card className="h-full">
         <CardHeader>
           <CardTitle>{company}</CardTitle>
-          <CardDescription>Lorem ipsum dolor sit amet.</CardDescription>
+          <CardDescription>{description}</CardDescription>
         </CardHeader>
       </Card>
     </Link>
