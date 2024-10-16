@@ -4,7 +4,13 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Input } from "./ui/input";
 import { useDebouncedCallback } from "use-debounce";
 
-const Search = () => {
+const Search = ({
+  notAbsolute,
+  size,
+}: {
+  notAbsolute?: boolean;
+  size?: string;
+}) => {
   const seacrchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -20,7 +26,11 @@ const Search = () => {
   });
 
   return (
-    <div className="absolute left-0 hidden lg:block">
+    <div
+      className={`${
+        notAbsolute ? "" : "absolute left-0 hidden lg:block"
+      } ${size}`}
+    >
       <Input
         type="text"
         placeholder="Search"

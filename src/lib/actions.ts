@@ -4,8 +4,16 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { deleteStatus } from "./db";
 import prisma from "./prisma";
-import { decrypt, encrypt, getDate, getStatusType, validDate } from "./utils";
-import { StatusType } from "@prisma/client";
+import {
+  decrypt,
+  encrypt,
+  getDate,
+  getStatusType,
+  parseDate,
+  validDate,
+  validOneDate,
+} from "./utils";
+import { ConductType, Recruit, StatusType } from "@prisma/client";
 import axios from "axios";
 import { paradeStateMessage } from "./parade-state-message";
 import { signIn } from "./auth";
@@ -214,4 +222,101 @@ export async function getSessionData() {
   return encryptedSessionData
     ? JSON.parse(decrypt(encryptedSessionData, process.env.ENCRYPTED_KEY!))
     : null;
+}
+
+export async function createConduct(data: FormData) {
+  const title = data.get("title")?.toString();
+  const type = data.get("type")?.toString();
+  const date = data.get("date")?.toString();
+  const company = data.get("company")?.toString();
+
+  if (!title || !type || !date || !company) {
+    throw Error("Please fill in the form details correctly");
+  }
+
+  if (!validOneDate(date)) {
+    throw Error("Please enter a correct date");
+  }
+
+  try {
+    await prisma.conduct.create({
+      data: {
+        title,
+        date,
+        type: type as ConductType,
+        companyId: parseInt(JSON.parse(company).id),
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    throw Error("There was an issue with create your conduct");
+  }
+
+  revalidatePath(`/company/${JSON.parse(company).name.toLowerCase()}/conducts`);
+
+  return true;
+}
+
+async function recruitsWithoutStatus(date: string) {
+  const parsedDate = parseDate(date);
+  const formattedDate = parsedDate
+    .toLocaleDateString("en-GB")
+    .split("/")
+    .reverse()
+    .join("")
+    .slice(0, 6);
+
+  const withoutStatus = await prisma.recruit.findMany({
+    where: {
+      statuses: {
+        none: {
+          // Ensure the recruit has no status covering the given date
+          startDate: { lte: formattedDate },
+          endDate: { gte: formattedDate },
+        },
+      },
+    },
+  });
+
+  return withoutStatus;
+}
+
+export async function editStrength(data: FormData) {
+  const allRecruits: boolean =
+    data.get("all-recruits")?.toString().toLowerCase() === "true";
+  const participated = data.get("participants")?.toString();
+  const fallOuts = data.get("fall-outs")?.toString() || ""; // handle empty fallOuts
+
+  const date = data.get("date")?.toString();
+  const conductId = data.get("conductId")?.toString();
+
+  if (
+    allRecruits === null ||
+    allRecruits === undefined ||
+    !date ||
+    !conductId
+  ) {
+    throw Error("Missing some required fields.");
+  }
+
+  if (allRecruits) {
+    const strength: Recruit[] = await recruitsWithoutStatus(date);
+
+    // Convert fallOuts to an array of IDs and filter out matching recruits
+    const fallOutsArray = fallOuts
+      ? fallOuts.split(",").map((id) => id.trim())
+      : [];
+
+    const filteredStrength = strength.filter(
+      (recruit) => !fallOutsArray.includes(recruit.id)
+    );
+
+    // Do something with filteredStrength, like returning it or processing it further
+    // await prisma.conduct.update({
+    //   where: { id: parseInt(conductId) },
+    //   data: { recruits: filteredStrength },
+    // });
+  }
+
+  console.log(allRecruits);
 }

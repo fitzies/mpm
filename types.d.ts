@@ -42,3 +42,7 @@ interface SessionData {
   username: string;
   // Add other fields as necessary
 }
+
+type ConductWithRecruits = Prisma.ConductGetPayload<{
+  include: { recruits: true; company: true };
+}>;

@@ -20,6 +20,7 @@ model Company {
   commanders Commander[]
 
   paradeStateSubmitted String?
+  conducts   Conduct[] 
 }
 
 model Recruit {
@@ -31,6 +32,8 @@ model Recruit {
 
   polarAccessToken String?
   polarUserId String?
+
+  conducts   Conduct[] @relation("RecruitConductParticipation") // Add this field
 }
 
 model Commander {
@@ -45,6 +48,8 @@ model Commander {
 
   username String @unique
   password String
+
+  conducts   Conduct[] @relation("CommanderConductParticipation") // Add this field
 }
 
 model Status {
@@ -74,4 +79,34 @@ enum StatusType {
   MCP2
   LDP1
   LDP2
+}
+
+model Conduct {
+  id Int @id @default(autoincrement())
+  title String
+  type ConductType
+  date String
+
+  recruits     Recruit[]   @relation("RecruitConductParticipation")
+  commanders   Commander[] @relation("CommanderConductParticipation")
+
+  companyId Int
+  company Company @relation(fields: [companyId], references: [id])
+}
+
+enum ConductType {
+  StengthTraining
+  HRZTraining
+  DistanceInterval
+  VOC
+  SOC
+  MetabolicCircuit
+  SAQ
+  RouteMarch
+  Swimming
+  EnduranceRun
+  SportsAndGames
+  CombatPT
+  IPPT
+  BCCT
 }

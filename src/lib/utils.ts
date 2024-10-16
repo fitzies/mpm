@@ -143,6 +143,22 @@ export const getStatusType = (str: string) => {
   if (str === "ReportSick") return StatusType.ReportSick;
 };
 
+export function validOneDate(date: string) {
+  if (date.length !== 6) return null;
+
+  const day = parseInt(date.slice(0, 2), 10);
+  const month = parseInt(date.slice(2, 4), 10) - 1; // Months are 0-indexed
+  const year = parseInt(date.slice(4, 6), 10) + 2000; // Assuming years are from 2000+
+
+  const dateObj = new Date(year, month, day);
+
+  return dateObj.getDate() === day &&
+    dateObj.getMonth() === month &&
+    dateObj.getFullYear() === year
+    ? dateObj
+    : null;
+}
+
 export const validDate = (date1: string, date2: string): boolean => {
   // Check if a date is valid and return a Date object
   const parseDate = (dateStr: string): Date | null => {
@@ -373,3 +389,7 @@ export function decrypt(encryptedText: string, key: string): string {
 
   return result;
 }
+
+export const addSpacesToEnumValue = (value: string) => {
+  return value.replace(/([a-z])([A-Z])/g, "$1 $2");
+};
