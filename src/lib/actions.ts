@@ -311,12 +311,18 @@ export async function editStrength(data: FormData) {
       (recruit) => !fallOutsArray.includes(recruit.id)
     );
 
-    // Do something with filteredStrength, like returning it or processing it further
-    // await prisma.conduct.update({
-    //   where: { id: parseInt(conductId) },
-    //   data: { recruits: filteredStrength },
-    // });
+    await prisma.conduct.update({
+      where: { id: parseInt(conductId) },
+      data: {
+        recruits: {
+          set: filteredStrength.map((recruit) => ({ id: recruit.id })),
+        },
+      },
+    });
   }
 
+  const conduct = await prisma.conduct.findFirst({where: {id: parseInt(conductId)}, include: {company: true}})
+
   console.log(allRecruits);
+  revalidatePath(`/company/${conduct?.company.name.toLocaleLowerCase()}/conducts/${conductId}`)
 }

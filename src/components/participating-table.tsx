@@ -17,22 +17,20 @@ const ParticipatingTable = ({ participants }: { participants: Recruit[] }) => {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Name</TableHead>
-            <TableHead className="text-center">Reason</TableHead>
-            <TableHead className="text-right">Participation</TableHead>
+            {/* <TableHead className="text-center">Reason</TableHead> */}
+            <TableHead className="text-right">Participatated</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            {participants.map((participants) => {
+            {participants.map((participant) => {
               return (
-                <>
-                  <TableCell className="font-medium">INV001</TableCell>
-                  <TableCell className="text-center">Credit Card</TableCell>
-                  <TableCell className="text-right">$250.00</TableCell>
-                </>
+          <TableRow key={participant.id}>
+                  <TableCell className="font-medium">{participant.id} {participant.name}</TableCell>
+                  {/* <TableCell className="text-center"></TableCell> */}
+                  <TableCell className="text-right">Yes</TableCell>
+          </TableRow>
               );
             })}
-          </TableRow>
         </TableBody>
       </Table>
     </>
