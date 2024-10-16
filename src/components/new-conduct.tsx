@@ -59,7 +59,7 @@ const NewConduct = ({ company }: { company: Company }) => {
             action={async (data: FormData) => {
               try {
                 setLoading(() => true);
-                let res = await createConduct(data);
+                const res = await createConduct(data);
                 if (res) {
                   toast({
                     title: `Conduct created`,
