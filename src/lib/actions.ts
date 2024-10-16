@@ -257,30 +257,66 @@ export async function createConduct(data: FormData) {
   return true;
 }
 
-async function recruitsWithoutStatus(date: string, companyId: number) {
-  const parsedDate = parseDate(date);
-  const formattedDate = parsedDate
-    .toLocaleDateString("en-GB")
-    .split("/")
-    .reverse()
-    .join("")
-    .slice(0, 6);
+async function recruitsParticipationStatus(
+  date: string,
+  companyId: number,
+  fallouts: string[]
+) {
+  const parsedDate = parseDate(date); // Parse ddmmyy into a Date object
 
-  const withoutStatus = await prisma.recruit.findMany({
-    where: {
-      statuses: {
-        none: {
-          // Ensure the recruit has no status covering the given date
-          startDate: { lte: formattedDate },
-          endDate: { gte: formattedDate },
-        },
-      },
-      companyId
+  // Fetch all recruits and their statuses
+  const recruitsWithStatuses = await prisma.recruit.findMany({
+    where: { companyId },
+    include: {
+      statuses: true, // Include related statuses
     },
   });
 
-  return withoutStatus;
+  // Map each recruit to an object with their participation status
+  const participationStatus = recruitsWithStatuses.map((recruit) => {
+    let participated = true; // Assume the recruit can participate by default
+
+    // Check if the recruit is in the fallouts array and set participation to false
+    if (fallouts.includes(recruit.id)) {
+      participated = false;
+    }
+
+    // If the recruit is not already excluded due to fallouts, check statuses
+    if (participated) {
+      recruit.statuses.forEach((status) => {
+        const statusStartDate = parseDate(status.startDate); // Parse ddmmyy string
+        const statusEndDate = parseDate(status.endDate); // Parse ddmmyy string
+
+        // General check: Exclude if parsedDate falls within status period
+        if (parsedDate >= statusStartDate && parsedDate <= statusEndDate) {
+          participated = false;
+        }
+
+        // Special check for "LD" or "MC" statuses: Exclude if within 2 days after endDate
+        if (status.type === "LD" || status.type === "MC") {
+          const twoDaysAfterEndDate = new Date(statusEndDate);
+          twoDaysAfterEndDate.setDate(twoDaysAfterEndDate.getDate() + 2);
+
+          // Exclude if parsedDate is within two days after the status' end date
+          if (parsedDate <= twoDaysAfterEndDate) {
+            participated = false;
+          }
+        }
+      });
+    }
+
+    // Return the recruit object if they participated, otherwise return null
+    return participated ? recruit : null;
+  });
+
+  // Filter out null values and return only participating recruits
+  return participationStatus.filter((recruit) => recruit !== null) as Recruit[]; // Replace 'Recruit' with the appropriate type if defined
 }
+
+
+
+
+
 
 export async function editStrength(data: FormData) {
   const allRecruits: boolean =
@@ -303,22 +339,17 @@ export async function editStrength(data: FormData) {
   const conduct = await prisma.conduct.findFirst({where: {id: parseInt(conductId)}, include: {company: true}})
 
   if (allRecruits) {
-    const strength: Recruit[] = await recruitsWithoutStatus(date, conduct!.companyId);
-
-    // Convert fallOuts to an array of IDs and filter out matching recruits
     const fallOutsArray = fallOuts
       ? fallOuts.split(",").map((id) => id.trim())
       : [];
 
-    const filteredStrength = strength.filter(
-      (recruit) => !fallOutsArray.includes(recruit.id)
-    );
+    const strength = await recruitsParticipationStatus(date, conduct!.companyId, fallOutsArray);
 
     await prisma.conduct.update({
       where: { id: parseInt(conductId) },
       data: {
         recruits: {
-          set: filteredStrength.map((recruit) => ({ id: recruit.id })),
+          set: strength.map((recruit) => ({ id: recruit.id })),
         },
       },
     });
@@ -327,4 +358,37 @@ export async function editStrength(data: FormData) {
 
   console.log(allRecruits);
   revalidatePath(`/company/${conduct?.company.name.toLocaleLowerCase()}/conducts/${conductId}`)
+}
+
+export async function getParticipants(conductId: number) {
+  const conduct = await prisma.conduct.findUnique({
+    where: { id: conductId },
+    include: { recruits: true, company: { include: { recruits: true } } },
+  });
+
+  if (!conduct) {
+    throw new Error("Can't retrieve conduct.");
+  }
+
+  if (conduct.recruits.length <= 0) {
+    return []
+  }
+
+  const participants = conduct.recruits; // Recruits that participated in the conduct
+  const allRecruits = conduct.company.recruits; // All recruits in the company
+
+  // Map all recruits to the participation status
+  const participationStatus = allRecruits.map((recruit) => {
+    const participated = participants.some(
+      (participant) => participant.id === recruit.id
+    ); // Check if the recruit participated
+
+    return {
+      recruitId: recruit.id,
+      recruitName: recruit.name,
+      participated: participated, // true if in the participants list, false otherwise
+    };
+  });
+
+  return participationStatus;
 }

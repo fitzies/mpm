@@ -9,7 +9,10 @@ import {
 } from "@/components/ui/table";
 import { Recruit } from "@prisma/client";
 
-const ParticipatingTable = ({ participants }: { participants: Recruit[] }) => {
+const ParticipatingTable = ({ participants }: { participants: {recruitId: string, recruitName: string, participated: boolean}[] }) => {
+
+  participants.sort((a, b) => parseInt(a.recruitId.substring(1)) - parseInt(b.recruitId.substring(1)))
+
   return (
     <>
       <Table>
@@ -24,10 +27,11 @@ const ParticipatingTable = ({ participants }: { participants: Recruit[] }) => {
         <TableBody>
             {participants.map((participant) => {
               return (
-          <TableRow key={participant.id}>
-                  <TableCell className="font-medium">{participant.id} {participant.name}</TableCell>
+          <TableRow key={participant.recruitId}>
+                  <TableCell className="font-medium">{participant.recruitId} {participant.recruitName}</TableCell>
+                  {/* <TableCell className="font-medium">{participant.recruitId} {participant.recruitName}</TableCell> */}
                   {/* <TableCell className="text-center"></TableCell> */}
-                  <TableCell className="text-right">Yes</TableCell>
+                  <TableCell className="text-right">{participant.participated ? "Yes" : "No"}</TableCell>
           </TableRow>
               );
             })}

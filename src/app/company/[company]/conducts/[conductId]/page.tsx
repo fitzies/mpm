@@ -10,6 +10,7 @@ import {
 import ParticipatingTable from "@/components/participating-table";
 import { Button } from "@/components/ui/button";
 import EditStrength from "@/components/edit-strength";
+import { getParticipants } from "@/lib/actions";
 
 const Page = async ({ params }: { params: { conductId: string } }) => {
   const conduct = await prisma.conduct.findUnique({
@@ -24,6 +25,8 @@ const Page = async ({ params }: { params: { conductId: string } }) => {
       </div>
     );
   }
+
+  const participants = await getParticipants(conduct.id)
 
   return (
     <PageWrapper className="!py-24 !px-12 flex flex-col">
@@ -55,7 +58,7 @@ const Page = async ({ params }: { params: { conductId: string } }) => {
         </Button>
         <EditStrength conduct={conduct} />
       </div>
-      <ParticipatingTable participants={conduct.recruits} />
+      <ParticipatingTable participants={participants} />
     </PageWrapper>
   );
 };
