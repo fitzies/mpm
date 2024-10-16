@@ -257,7 +257,7 @@ export async function createConduct(data: FormData) {
   return true;
 }
 
-async function recruitsWithoutStatus(date: string) {
+async function recruitsWithoutStatus(date: string, companyId: number) {
   const parsedDate = parseDate(date);
   const formattedDate = parsedDate
     .toLocaleDateString("en-GB")
@@ -275,6 +275,7 @@ async function recruitsWithoutStatus(date: string) {
           endDate: { gte: formattedDate },
         },
       },
+      companyId
     },
   });
 
@@ -290,6 +291,7 @@ export async function editStrength(data: FormData) {
   const date = data.get("date")?.toString();
   const conductId = data.get("conductId")?.toString();
 
+  
   if (
     allRecruits === null ||
     allRecruits === undefined ||
@@ -298,9 +300,10 @@ export async function editStrength(data: FormData) {
   ) {
     throw Error("Missing some required fields.");
   }
+  const conduct = await prisma.conduct.findFirst({where: {id: parseInt(conductId)}, include: {company: true}})
 
   if (allRecruits) {
-    const strength: Recruit[] = await recruitsWithoutStatus(date);
+    const strength: Recruit[] = await recruitsWithoutStatus(date, conduct!.companyId);
 
     // Convert fallOuts to an array of IDs and filter out matching recruits
     const fallOutsArray = fallOuts
@@ -321,7 +324,6 @@ export async function editStrength(data: FormData) {
     });
   }
 
-  const conduct = await prisma.conduct.findFirst({where: {id: parseInt(conductId)}, include: {company: true}})
 
   console.log(allRecruits);
   revalidatePath(`/company/${conduct?.company.name.toLocaleLowerCase()}/conducts/${conductId}`)
