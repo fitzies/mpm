@@ -111,6 +111,7 @@ enum ConductType {
   EnduranceRun
   SportsAndGames
   CombatPT
+  CombatCircuit
   IPPT
   BCCT
 }
