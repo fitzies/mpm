@@ -41,7 +41,7 @@ const AddStatus = ({
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
-  const excludedStatuses = ["MCP1", "MCP2", "LDP1", "LDP2"];
+  const excludedStatuses = ["MCP1", "MCP2", "LDP1", "LDP2", "ReportSick", "Physio"];
 
   const statusTypes = Object.values(StatusType).filter(
     (status) => !excludedStatuses.includes(status)
@@ -146,7 +146,7 @@ const AddStatus = ({
                   </SelectContent>
                 </Select>
               )}
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-2 items-center lg:absolute lg:right-6">
                 <p className="text-sm text-zinc-400">Commander</p>
                 <Switch
                   checked={isCommander}
@@ -171,8 +171,8 @@ const AddStatus = ({
                       <SelectItem value={type} key={type + index}>
                         {type === "CustomStatus"
                           ? "Custom"
-                          : type === "ReportSick"
-                          ? "Report Sick"
+                          : type === "Other"
+                          ? "Out of Camp"
                           : type}
                       </SelectItem>
                     );

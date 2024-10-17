@@ -32,8 +32,9 @@ const Page = async ({ params }: { params: { company: string } }) => {
 
   return (
     <PageWrapper className="flex flex-col justify-center items-center">
-      <div className="flex justify-center items-center gap-4 w-full">
-        <Search notAbsolute size="w-full" />
+      <div className="flex justify-end items-center gap-4 w-full">
+        {/* <Search notAbsolute size="w-full" /> */}
+        <p className="text-zinc-400 lg:text-md text-sm">Please note that this feature is in beta</p>
         <NewConduct company={company} />
       </div>
       <div className="grid lg:grid-cols-4 grid-cols-1 py-4 w-full gap-4">

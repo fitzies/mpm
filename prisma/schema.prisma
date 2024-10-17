@@ -7,8 +7,8 @@ generator client {
 
 // prisma/schema.prisma
 datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
   // uncomment next line if you use Prisma <5.10
   // directUrl = env("DATABASE_URL_UNPOOLED")
 }
@@ -20,51 +20,51 @@ model Company {
   commanders Commander[]
 
   paradeStateSubmitted String?
-  conducts   Conduct[] 
+  conducts             Conduct[]
 }
 
 model Recruit {
-  id         String      @id // 5-length string ID
-  name       String
-  statuses   Status[]     // Recruits can have multiple statuses
-  company    Company      @relation(fields: [companyId], references: [id])
-  companyId  Int
+  id        String   @id // 5-length string ID
+  name      String
+  statuses  Status[] // Recruits can have multiple statuses
+  company   Company  @relation(fields: [companyId], references: [id])
+  companyId Int
 
   polarAccessToken String?
-  polarUserId String?
+  polarUserId      String?
 
-  conducts   Conduct[] @relation("RecruitConductParticipation") // Add this field
+  conducts   Conduct[]    @relation("RecruitConductParticipation") // Add this field
+  ReportSick ReportSick[]
 }
 
 model Commander {
-  id         Int         @id @default(autoincrement())
-  name       String
-  statuses   Status[]     // Commanders can have multiple statuses
-  company    Company      @relation(fields: [companyId], references: [id])
-  companyId  Int
+  id        Int      @id @default(autoincrement())
+  name      String
+  statuses  Status[] // Commanders can have multiple statuses
+  company   Company  @relation(fields: [companyId], references: [id])
+  companyId Int
 
   polarAccessToken String?
-  polarUserId String?
+  polarUserId      String?
 
   username String @unique
   password String
-
-  conducts   Conduct[] @relation("CommanderConductParticipation") // Add this field
 }
 
 model Status {
-  id          Int         @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   type        StatusType
-  startDate   String      // Store start date in ddmmyy format
-  endDate     String      // Store end date in ddmmyy format
-  recruit     Recruit?    @relation(fields: [recruitId], references: [id])  // Nullable, since it could be a Commander
-  recruitId   String?     // Nullable to allow either recruitId or commanderId
-  commander   Commander?  @relation(fields: [commanderId], references: [id]) // Nullable to allow either recruitId or commanderId
-  commanderId Int?        // Nullable to allow either recruitId or commanderId
-  remarks String?
+  startDate   String // Store start date in ddmmyy format
+  endDate     String // Store end date in ddmmyy format
+  recruit     Recruit?   @relation(fields: [recruitId], references: [id]) // Nullable, since it could be a Commander
+  recruitId   String? // Nullable to allow either recruitId or commanderId
+  commander   Commander? @relation(fields: [commanderId], references: [id]) // Nullable to allow either recruitId or commanderId
+  commanderId Int? // Nullable to allow either recruitId or commanderId
+  remarks     String?
 
-  createdAt DateTime @default(now())
-  createdById Int? 
+  createdAt   DateTime     @default(now())
+  createdById Int?
+  ReportSick  ReportSick[]
 }
 
 enum StatusType {
@@ -74,7 +74,7 @@ enum StatusType {
   Physio
   ReportSick
   CustomStatus
-  
+
   MCP1
   MCP2
   LDP1
@@ -82,16 +82,20 @@ enum StatusType {
 }
 
 model Conduct {
-  id Int @id @default(autoincrement())
+  id    Int         @id @default(autoincrement())
   title String
-  type ConductType
-  date String
+  type  ConductType
+  date  String
 
-  recruits     Recruit[]   @relation("RecruitConductParticipation")
-  commanders   Commander[] @relation("CommanderConductParticipation")
+  recruits Recruit[] @relation("RecruitConductParticipation")
+  fallouts String[]
 
   companyId Int
-  company Company @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id])
+
+  supervisingId Int?
+  conductingId  Int?
+  chiefSafetyId Int?
 }
 
 enum ConductType {
@@ -109,4 +113,18 @@ enum ConductType {
   CombatPT
   IPPT
   BCCT
+}
+
+model ReportSick {
+  id        Int     @id @default(autoincrement())
+  recruit4d String
+  recruit   Recruit @relation(fields: [recruit4d], references: [id])
+
+  date      String
+  companyId Int
+
+  fufilled Boolean @default(false)
+
+  statusId Int?
+  status   Status? @relation(fields: [statusId], references: [id])
 }

@@ -1,4 +1,4 @@
-import { Commander, Recruit, Status } from "@prisma/client";
+import { Commander, Recruit, ReportSick, Status } from "@prisma/client";
 
 type RecruitWithStatuses = Recruit & {
   statuses: Status[];
@@ -46,3 +46,14 @@ interface SessionData {
 type ConductWithRecruits = Prisma.ConductGetPayload<{
   include: { recruits: true; company: true };
 }>;
+
+type ReportSickWithDetails = {
+  id: number; // Autoincremented integer
+  recruit4d: string; // recruit4d references Recruit.id
+  recruit: Recruit; // Relation to Recruit model
+  date: string; // Stored as a string in the database
+  companyId: number; // Company ID as an integer
+  fufilled: boolean; // Boolean, default false
+  statusId?: number | null; // Optional status ID
+  status?: Status | null; // Optional relation to Status
+};

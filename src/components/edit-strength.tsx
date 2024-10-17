@@ -15,31 +15,28 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Switch } from "./ui/switch";
 import { editStrength } from "@/lib/actions";
+import { Conduct } from "@prisma/client";
 
-const EditStrength = ({ conduct }: { conduct: ConductWithRecruits }) => {
-  const [allRecruits, setAllRecruits] = useState<boolean>(true);
-  const [participants, setParticipants] = useState<string>("");
-  const [fallOuts, setFallOuts] = useState<string>("");
+const EditStrength = ({ conduct }: { conduct: Conduct }) => {
+  const [fallOuts, setFallOuts] = useState<string>(conduct.fallouts.join(", "));
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const [open, setOpen] = useState(false);
 
   const isValid = () => {
     // Updated pattern: Allow single `V1101` and multiple entries separated by commas
     const pattern = /^[A-Za-z]\d{4}(, ?[A-Za-z]\d{4})*$/;
 
-    const isParticipantsValid =
-      (participants.length > 0 && pattern.test(participants)) ||
-      participants.length === 0;
     const isFallOutsValid =
       (fallOuts.length > 0 && pattern.test(fallOuts)) || fallOuts.length === 0;
 
     // Return true only if both are valid
-    return isParticipantsValid && isFallOutsValid;
+    return isFallOutsValid;
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <Button size={"sm"} asChild>
         <DialogTrigger>Edit Strength</DialogTrigger>
       </Button>
@@ -55,46 +52,27 @@ const EditStrength = ({ conduct }: { conduct: ConductWithRecruits }) => {
           className="grid gap-4 pt-4"
           action={async (data) => {
             try {
-              await editStrength(data);
+              setLoading(() => true);
+              const res = await editStrength(data);
+              if (res === true) {
+                setOpen(() => false);
+              }
             } catch (error) {
               if (error instanceof Error) {
                 setError(() => error.message);
               } else {
                 setError(() => "There appears to be an issue");
               }
+            } finally {
+              setLoading(() => false);
             }
           }}
         >
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              All recruits
-            </Label>
-            <Switch
-              checked={allRecruits}
-              onCheckedChange={setAllRecruits}
-              name="all-recruits"
-              value={allRecruits.toString()}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="participants" className="text-right">
-              Participated
-            </Label>
-            <Input
-              disabled={allRecruits}
-              name="participants"
-              className="col-span-3"
-              placeholder="V1101, V1102"
-              value={participants}
-              onChange={(e) => setParticipants(e.target.value)}
-            />
-          </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="fallOuts" className="text-right">
               Fall outs
             </Label>
             <Input
-              disabled={!allRecruits}
               name="fall-outs"
               placeholder="V1401, V2102"
               className="col-span-3"
@@ -102,8 +80,12 @@ const EditStrength = ({ conduct }: { conduct: ConductWithRecruits }) => {
               onChange={(e) => setFallOuts(e.target.value)}
             />
           </div>
-          <Button className="mt-2" disabled={!isValid()} type="submit">
-            Submit
+          <Button
+            className="mt-2"
+            disabled={!isValid() || loading}
+            type="submit"
+          >
+            {loading ? "..." : "Submit"}
           </Button>
           {error.length > 0 ? (
             <p className="text-sm text-red-400">{error}</p>
