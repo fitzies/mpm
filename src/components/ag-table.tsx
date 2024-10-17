@@ -36,7 +36,7 @@ export const AgTable = async ({
   return (
     <>
       <Table className="my-4">
-        <TableCaption>A list of your recent invoices.</TableCaption>
+        <TableCaption>A list of participants</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
