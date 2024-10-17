@@ -10,6 +10,7 @@ import {
 import { parseDate } from "@/lib/utils";
 
 import { Company, Conduct, ConductType, Recruit } from "@prisma/client";
+import { Badge } from "./ui/badge";
 
 export const AgTable = async ({
   type,
@@ -53,9 +54,11 @@ export const AgTable = async ({
                 </TableCell>
                 {arr.map((value) => (
                   <TableCell key={value.id}>
-                    {value.recruits.map((r) => r.id).includes(recruit.id)
-                      ? "Yes"
-                      : "No"}
+                    {value.recruits.map((r) => r.id).includes(recruit.id) ? (
+                      <Badge variant="outline">Yes</Badge>
+                    ) : (
+                      <Badge variant="destructive">No</Badge>
+                    )}
                   </TableCell>
                 ))}
               </TableRow>
