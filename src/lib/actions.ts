@@ -377,16 +377,16 @@ export async function getParticipants(conductId: number): Promise<{recruitId: st
       (participant) => participant.id === recruit.id
     ); // Check if the recruit participated
 
-    const _status = recruit.statuses.filter(status => parseDate(status.startDate) <= parseDate(getDate()) && parseDate(status.endDate) >= parseDate(getDate()))
+    const _status = recruit.statuses.filter(status => parseDate(status.startDate) <= parseDate(conduct.date) && parseDate(status.endDate) >= parseDate(conduct.date))
     
-    const oneDayAgo = new Date();
+    const oneDayAgo = parseDate(conduct.date)
     oneDayAgo.setDate(oneDayAgo.getDate() - 1);
 
     const P1 = recruit.statuses.filter(status => {
         const endDate = parseDate(status.endDate);
 
         // Check if the status is only one day expired
-        const isOneDayExpired = endDate < new Date() && endDate >= oneDayAgo;
+        const isOneDayExpired = endDate < parseDate(conduct.date) && endDate >= oneDayAgo;
     
         // Check for the status type being MC or LD
         const isMCOrLD = status.type === "MC" || status.type === 'LD';
