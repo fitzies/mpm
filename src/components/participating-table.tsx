@@ -11,6 +11,7 @@ import {
 const ParticipatingTable = ({
   participants,
   fallouts,
+  query,
 }: {
   participants: {
     recruitId: string;
@@ -19,11 +20,22 @@ const ParticipatingTable = ({
     reason: string[];
   }[];
   fallouts: string[];
+  query: string;
 }) => {
   participants.sort(
     (a, b) =>
       parseInt(a.recruitId.substring(1)) - parseInt(b.recruitId.substring(1))
   );
+
+  const queried =
+    query.length > 1
+      ? participants.filter(
+          (a) =>
+            a.recruitName.includes(query.toUpperCase()) ||
+            a.recruitId.includes(query.toUpperCase()) ||
+            a.reason.includes(query.toUpperCase())
+        )
+      : participants;
 
   return (
     <>
@@ -38,7 +50,7 @@ const ParticipatingTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {participants.map((participant) => {
+          {queried.map((participant) => {
             // const reason = participant.reason.sort((a, b) => b. - a);
             return (
               <TableRow key={participant.recruitId}>

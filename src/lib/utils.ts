@@ -393,3 +393,7 @@ export function decrypt(encryptedText: string, key: string): string {
 export const addSpacesToEnumValue = (value: string) => {
   return value.replace(/([a-z])([A-Z])/g, "$1 $2");
 };
+
+export const formatString = (date: string) => {
+  return parseDate(date).toUTCString().split("23")[0]
+} 

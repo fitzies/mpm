@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
-import { parseDate } from "@/lib/utils";
+import { formatString } from "@/lib/utils";
 import { Progress } from "./ui/progress";
 import { ConductWithRecruits } from "../../types";
 import Link from "next/link";
@@ -18,9 +18,7 @@ const ConductCard = ({ conduct }: { conduct: ConductWithRecruits }) => {
       <Card className="hover:-translate-y-1 duration-150">
         <CardHeader>
           <CardTitle>{conduct.title}</CardTitle>
-          <CardDescription>
-            {parseDate(conduct.date).toUTCString().split("23")[0]}
-          </CardDescription>
+          <CardDescription>{formatString(conduct.date)}</CardDescription>
         </CardHeader>
         <CardContent>
           <Progress

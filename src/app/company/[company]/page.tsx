@@ -3,7 +3,12 @@ import Dashboard from "@/components/dashboard";
 import PageWrapper from "@/components/page-wrapper";
 import ParadeChunk from "@/components/parade-chunk";
 import { getActiveStatuses, getCompany } from "@/lib/db";
-import { getOutOfCampStrength, getPlatoonStrength } from "@/lib/utils";
+import prisma from "@/lib/prisma";
+import {
+  getOutOfCampStrength,
+  getPlatoonStrength,
+  parseDate,
+} from "@/lib/utils";
 import { StatusType } from "@prisma/client";
 
 const Page = async ({ params }: { params: { company: string } }) => {
@@ -28,10 +33,29 @@ const Page = async ({ params }: { params: { company: string } }) => {
     false
   );
 
-  // const recruitsOutOfCampStrength = await getRecruitsWithStatus(company.id, [
-  //   StatusType.MC,
-  //   StatusType.Other,
-  // ]);
+  let conducts = await prisma.conduct.findMany({
+    where: { companyId: company.id },
+    include: { recruits: true },
+  });
+
+  // Sort conducts by date in descending order
+  conducts = conducts.sort(
+    (a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime()
+  );
+
+  // Total recruits in the company
+  const totalRecruits = company.recruits.length;
+
+  // Calculate total participation percentage for each conduct
+  const totalParticipationPercentage = conducts.reduce((total, conduct) => {
+    const participatingRecruits = conduct.recruits.length; // Number of participating recruits
+    const participationPercentage = participatingRecruits / totalRecruits; // Calculate participation percentage
+    return total + participationPercentage; // Sum the participation percentages
+  }, 0);
+
+  // Calculate average participation percentage
+  const averageParticipationPercentage =
+    totalParticipationPercentage / conducts.length;
 
   return (
     <PageWrapper className="flex min-h-screen flex-col">
@@ -50,8 +74,16 @@ const Page = async ({ params }: { params: { company: string } }) => {
               getOutOfCampStrength(company.commanders)
             } / ${company.commanders.length.toString()}`}
           ></Chunk>
-          <Chunk title="Latest conduct" body="None"></Chunk>
-          <Chunk title="Participation strength" body="0%"></Chunk>
+          <Chunk
+            title="Latest conduct"
+            body={conducts.length > 0 ? conducts[0].title : "None"}
+          ></Chunk>
+          <Chunk
+            title="Participation mean"
+            body={`${
+              (averageParticipationPercentage * 100).toString().split(".")[0]
+            }%`}
+          ></Chunk>
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-4">
           <Dashboard

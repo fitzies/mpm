@@ -17,6 +17,7 @@ import { ConductType, Recruit, StatusType } from "@prisma/client";
 import axios from "axios";
 import { paradeStateMessage } from "./parade-state-message";
 import { SessionData } from "../../types";
+import { redirect } from "next/navigation";
 
 export const handleDeleteStatus = async (data: FormData) => {
   const statusId = data.get("statusId");
@@ -464,4 +465,19 @@ export const setConductingStructure = async (data: FormData) => {
 
   revalidatePath(`/company/${company?.name.toLowerCase()}/conducts/${conduct.id}`)
   return true
+}
+
+export const deleteConduct = async (data: FormData) => {
+  const _id = data.get("conductId")?.toString()
+
+  if (!_id) {
+    throw Error("This conduct does not exist")
+  }
+
+  const id = parseInt(_id)
+
+  const conduct = await prisma.conduct.delete({where: {id}, include: {company: true}})
+
+  redirect(`/company/${conduct.company.name.toLowerCase()}/conducts`)
+
 }
