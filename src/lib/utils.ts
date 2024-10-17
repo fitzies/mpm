@@ -394,6 +394,10 @@ export const addSpacesToEnumValue = (value: string) => {
   return value.replace(/([a-z])([A-Z])/g, "$1 $2");
 };
 
+export const removeSpacesToEnumValue = (value: string) => {
+  return value.replace(" ", "");
+};
+
 export const formatString = (date: string) => {
   return parseDate(date).toUTCString().split("23")[0]
 } 
