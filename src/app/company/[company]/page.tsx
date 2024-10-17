@@ -131,7 +131,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
               getOutOfCampStrength(company.recruits, 4)
             } / ${getPlatoonStrength(company.recruits, 4)}`}
           />
-          <ParadeChunk company={company} />
+          {company.id !== 6 ? <ParadeChunk company={company} /> : null}
         </div>
       </main>
     </PageWrapper>
