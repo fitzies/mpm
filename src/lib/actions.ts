@@ -228,31 +228,38 @@ export async function createConduct(data: FormData) {
   const title = data.get("title")?.toString();
   const type = data.get("type")?.toString();
   const date = data.get("date")?.toString();
-  const company = data.get("company")?.toString();
+  const companyId = data.get("companyId")?.toString();
 
-  if (!title || !type || !date || !company) {
+  if (!title || !type || !date || !companyId) {
     throw Error("Please fill in the form details correctly");
   }
 
   if (!validOneDate(date)) {
     throw Error("Please enter a correct date");
   }
+  const company = await prisma.company.findFirst({where: {id: parseInt(companyId)}})
+
+  if (!company) {
+    throw Error("This company does not exist")
+  }
 
   try {
+    console.log(type, (companyId))
     await prisma.conduct.create({
       data: {
         title,
         date,
         type: type as ConductType,
-        companyId: parseInt(JSON.parse(company).id),
+        companyId: company.id,
       },
     });
   } catch (error) {
-    console.log(error);
-    throw Error("There was an issue with create your conduct");
+    console.log("\n\n\n---", error, "\n\n\n---");
+    throw Error("There was an issue creating your conduct");
   }
 
-  revalidatePath(`/company/${JSON.parse(company).name.toLowerCase()}/conducts`);
+
+  revalidatePath(`/company/${company.name.toLowerCase()}/conducts`);
 
   return true;
 }
@@ -480,4 +487,48 @@ export const deleteConduct = async (data: FormData) => {
 
   redirect(`/company/${conduct.company.name.toLowerCase()}/conducts`)
 
+}
+
+export async function upsertRecruitIntoConduct(data: FormData) {
+  const conductId = data.get("conductId")?.toString()
+  const recruitId = data.get("recruitId")?.toString()
+
+
+  if (!conductId || !recruitId) {
+    throw Error("Either this recruit or conduct does not exist")
+  }
+
+  const conduct = await prisma.conduct.findFirst({
+    where: { id: parseInt(conductId), },
+    select: { fallouts: true, recruits: true }, 
+  })
+
+  const company = await prisma.company.findFirst({where: {conducts: {some: {id: parseInt(conductId)}}}})
+
+  if (!conduct || !company) {
+    throw Error("This conduct does not exist")
+  }
+  
+  // Remove the recruitId from fallouts if it exists
+  const updatedFallouts = conduct.fallouts.filter(id => id !== recruitId);
+  
+  // Append the recruitId to participating
+  const newRecruit = await prisma.recruit.findFirst({where: {id: recruitId}})
+  const updatedParticipating = [...conduct.recruits, newRecruit];
+  
+  // Update the conduct record with new fallouts and participating arrays
+  await prisma.conduct.update({
+    where: { id: parseInt(conductId) },
+    data: {
+      fallouts: updatedFallouts,
+      // recruits: updatedParticipating,
+      recruits: {
+        set: [], // First clear existing recruits
+        connect: updatedParticipating.map((recruit) => ({ id: recruit!.id })), // Add eligible recruits
+      },
+    },
+  });
+
+  revalidatePath(`/company/${company.name.toLowerCase}/conducts/${conductId}`)
+  
 }

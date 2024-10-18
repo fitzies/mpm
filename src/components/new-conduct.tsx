@@ -141,11 +141,7 @@ const NewConduct = ({ company }: { company: Company }) => {
             {error.length > 0 ? (
               <p className="text-sm text-red-400">{error}</p>
             ) : null}
-            <input
-              className="hidden"
-              name="company"
-              value={JSON.stringify(company)}
-            />
+            <input className="hidden" name="companyId" value={company.id} />
           </form>
         </DialogContent>
       </Dialog>

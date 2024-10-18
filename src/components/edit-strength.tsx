@@ -10,10 +10,8 @@ import {
   DialogHeader,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { ConductWithRecruits } from "../../types";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { Switch } from "./ui/switch";
 import { editStrength } from "@/lib/actions";
 import { Conduct } from "@prisma/client";
 

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -7,11 +9,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Ellipsis } from "lucide-react";
+import { CustomDialog } from "./custom-dialog";
+import { Button } from "./ui/button";
+import { Conduct } from "@prisma/client";
+import { upsertRecruitIntoConduct } from "@/lib/actions";
 
 const ParticipatingTable = ({
   participants,
   fallouts,
   query,
+  conduct,
 }: {
   participants: {
     recruitId: string;
@@ -21,6 +29,7 @@ const ParticipatingTable = ({
   }[];
   fallouts: string[];
   query: string;
+  conduct: Conduct;
 }) => {
   participants.sort(
     (a, b) =>
@@ -43,10 +52,11 @@ const ParticipatingTable = ({
         <TableCaption></TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Name</TableHead>
+            <TableHead>Name</TableHead>
             {/* <TableHead className="text-center">Reason</TableHead> */}
             <TableHead className="text-center">Participatated</TableHead>
-            <TableHead className="text-right">Reason</TableHead>
+            <TableHead className="text-center">Reason</TableHead>
+            <TableHead className="text-right">Upsert</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -62,12 +72,48 @@ const ParticipatingTable = ({
                 <TableCell className="text-center">
                   {participant.participated ? "Yes" : "No"}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-center">
                   {fallouts.includes(participant.recruitId)
                     ? "Fell out"
                     : !participant.participated
                     ? participant.reason.join(", ")
                     : ""}
+                </TableCell>
+                <TableCell className="text-right">
+                  <CustomDialog
+                    title={`${
+                      participant.participated
+                        ? "This recruit is already participating"
+                        : "Are you sure you want to override and make this recruit present"
+                    }`}
+                    description={""}
+                    trigger={<Ellipsis className="ml-auto mr-2" />}
+                    btn={
+                      <Button
+                        className="w-full"
+                        disabled={participant.participated}
+                      >
+                        Confirm
+                      </Button>
+                    }
+                    loadingBtn={
+                      <Button className="w-full" disabled>
+                        ...
+                      </Button>
+                    }
+                    action={upsertRecruitIntoConduct}
+                  >
+                    <input
+                      className="hidden"
+                      name="conductId"
+                      value={conduct.id}
+                    />
+                    <input
+                      className="hidden"
+                      name="recruitId"
+                      value={participant.recruitId}
+                    />
+                  </CustomDialog>
                 </TableCell>
               </TableRow>
             );

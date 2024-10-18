@@ -136,6 +136,7 @@ const Page = async ({
         participants={participants}
         fallouts={conduct.fallouts}
         query={query}
+        conduct={conduct}
       />
     </PageWrapper>
   );
