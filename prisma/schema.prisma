@@ -114,6 +114,7 @@ enum ConductType {
   CombatCircuit
   IPPT
   BCCT
+  Fartlek
 }
 
 model ReportSick {
