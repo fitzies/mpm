@@ -35,6 +35,29 @@ export const CustomDialog = ({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // Prevent the default form submission behavior
+    setLoading(true);
+    setError("");
+
+    const formData = new FormData(event.currentTarget); // Get form data
+
+    try {
+      const res = await action(formData); // Call the provided action
+      if (res === true) {
+        setOpen(false); // Close dialog on success
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message); // Set error message
+      } else {
+        setError("Something went wrong");
+      }
+    } finally {
+      setLoading(false); // Reset loading state
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>{trigger ?? "Open"}</DialogTrigger>
@@ -43,25 +66,7 @@ export const CustomDialog = ({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <form
-          action={async (data) => {
-            try {
-              setLoading(() => true);
-              const res = await action(data);
-              if (res === true) {
-                setOpen(() => false);
-              }
-            } catch (error) {
-              if (error instanceof Error) {
-                setError(() => error.message);
-              } else {
-                setError(() => "Something went wrong");
-              }
-            } finally {
-              setLoading(() => false);
-            }
-          }}
-        >
+        <form onSubmit={handleSubmit}>
           {children}
           {!loading
             ? btn ?? <Button>Submit</Button>

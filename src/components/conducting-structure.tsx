@@ -65,19 +65,19 @@ export default function ConductingStructure({
           }}
         >
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="fallOuts" className="text-right">
+            <Label htmlFor="supervising" className="text-right">
               Supervising
             </Label>
             <SelectAppointment commanders={commanders} name="supervising" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="fallOuts" className="text-right">
+            <Label htmlFor="conducting" className="text-right">
               Conducting
             </Label>
             <SelectAppointment commanders={commanders} name="conducting" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="fallOuts" className="text-right">
+            <Label htmlFor="chief-safety" className="text-right">
               Chief Safety
             </Label>
             <SelectAppointment commanders={commanders} name="chief-safety" />

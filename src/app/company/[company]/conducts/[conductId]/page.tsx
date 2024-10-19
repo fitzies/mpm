@@ -43,20 +43,37 @@ const Page = async ({
 
   const query = searchParams?.query || "";
 
-  const commanders =
-    conduct.supervisingId && conduct.conductingId && conduct.chiefSafetyId
-      ? await prisma.commander.findMany({
-          where: {
-            id: {
-              in: [
-                conduct.supervisingId,
-                conduct.conductingId,
-                conduct.chiefSafetyId,
-              ],
-            },
-          },
-        })
-      : ["None", "None", "None"];
+  let commanders = {
+    supervising: "None",
+    conducting: "None",
+    chiefSafety: "None",
+  };
+
+  if (conduct.supervisingId && conduct.conductingId && conduct.chiefSafetyId) {
+    const commanderIds = [
+      conduct.supervisingId,
+      conduct.conductingId,
+      conduct.chiefSafetyId,
+    ];
+
+    const commandersData = await prisma.commander.findMany({
+      where: {
+        id: { in: commanderIds },
+      },
+    });
+
+    commanders = {
+      supervising:
+        commandersData.find((c) => c.id === conduct.supervisingId)?.name ??
+        "None",
+      conducting:
+        commandersData.find((c) => c.id === conduct.conductingId)?.name ??
+        "None",
+      chiefSafety:
+        commandersData.find((c) => c.id === conduct.chiefSafetyId)?.name ??
+        "None",
+    };
+  }
 
   return (
     <PageWrapper className="!py-24 !px-12 flex flex-col">
@@ -93,30 +110,9 @@ const Page = async ({
         </div>
       </div>
       <div className="grid lg:grid-cols-4 grid-cols-1 w-full gap-3 mb-10">
-        <Chunk
-          title="Supervising"
-          body={
-            typeof commanders[0] === "string"
-              ? commanders[0]
-              : commanders[0].name
-          }
-        />
-        <Chunk
-          title="Conducting"
-          body={
-            typeof commanders[1] === "string"
-              ? commanders[1]
-              : commanders[1].name
-          }
-        />
-        <Chunk
-          title="Chief Safety"
-          body={
-            typeof commanders[2] === "string"
-              ? commanders[2]
-              : commanders[2].name
-          }
-        />
+        <Chunk title="Supervising" body={commanders.supervising} />
+        <Chunk title="Conducting" body={commanders.conducting} />
+        <Chunk title="Chief Safety" body={commanders.chiefSafety} />
         <Chunk
           title="Participating Strength"
           body={`${conduct.recruits.length}/${conduct.company.recruits.length}`}

@@ -466,6 +466,10 @@ export const setConductingStructure = async (data: FormData) => {
     },
   });
 
+  console.log("supervising: " + supervisingId)
+  console.log("conducting: " + conductingId)
+  console.log("chiefSafety: " + chiefSafetyId)
+
 
   
   const company = await prisma.company.findFirst({where: {id: conduct.companyId}})
@@ -530,5 +534,6 @@ export async function upsertRecruitIntoConduct(data: FormData) {
   });
 
   revalidatePath(`/company/${company.name.toLowerCase}/conducts/${conductId}`)
-  
+
+  return true
 }
