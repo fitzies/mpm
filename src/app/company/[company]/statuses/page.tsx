@@ -22,11 +22,12 @@ import {
 } from "../../../../../types";
 import { filterResults, plusToString } from "@/lib/utils";
 import CellEdit from "@/components/cell-edit";
+// import AddStatus from "@/components/add-status2";
 // import AddStatus from "@/components/add-status";
-import AddStatus from "@/components/add-status";
 import Search from "@/components/search";
 
 import { sort_by_name } from "@/lib/utils";
+import AddStatusPopover from "@/components/add-status-popover";
 
 const StatusTable = ({
   statuses,
@@ -139,8 +140,8 @@ const Page = async ({
             <TabsTrigger value="Out of camp">Out of camp</TabsTrigger>
             <TabsTrigger value="Commanders">CR</TabsTrigger>
           </TabsList>
-          <AddStatus company={params.company} commanders={company.commanders} />
-          {/* <AddStatus /> */}
+          {/* <AddStatus company={params.company} commanders={company.commanders} /> */}
+          <AddStatusPopover company={company} />
         </div>
         <TabsContent value="All" className="w-full">
           <StatusTable

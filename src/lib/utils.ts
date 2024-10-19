@@ -134,7 +134,7 @@ export const plusToString = (type: string): string => {
     : type; // Fallback if none of the types match
 };
 
-export const getStatusType = (str: string) => {
+export const getStatusType = (str: string): StatusType | undefined => {
   if (str === "LD") return StatusType.LD;
   if (str === "MC") return StatusType.MC;
   if (str === "Other") return StatusType.Other;
@@ -399,5 +399,5 @@ export const removeSpacesToEnumValue = (value: string) => {
 };
 
 export const formatString = (date: string) => {
-  return parseDate(date).toUTCString().split("23")[0]
-} 
+  return parseDate(date).toUTCString().split("23")[0];
+};

@@ -237,14 +237,16 @@ export async function createConduct(data: FormData) {
   if (!validOneDate(date)) {
     throw Error("Please enter a correct date");
   }
-  const company = await prisma.company.findFirst({where: {id: parseInt(companyId)}})
+  const company = await prisma.company.findFirst({
+    where: { id: parseInt(companyId) },
+  });
 
   if (!company) {
-    throw Error("This company does not exist")
+    throw Error("This company does not exist");
   }
 
   try {
-    console.log(type, (companyId))
+    console.log(type, companyId);
     await prisma.conduct.create({
       data: {
         title,
@@ -257,7 +259,6 @@ export async function createConduct(data: FormData) {
     console.log("\n\n\n---", error, "\n\n\n---");
     throw Error("There was an issue creating your conduct");
   }
-
 
   revalidatePath(`/company/${company.name.toLowerCase()}/conducts`);
 
@@ -292,13 +293,15 @@ async function recruitsParticipationStatus(
       const statusEndDate = parseDate(status.endDate);
 
       // Check if the parsedDate is **within the status period** (startDate <= parsedDate <= endDate)
-      const isStatusActive = parsedDate >= statusStartDate && parsedDate <= statusEndDate;
-      
+      const isStatusActive =
+        parsedDate >= statusStartDate && parsedDate <= statusEndDate;
+
       // Special check for "LD" or "MC" statuses: exclude if within 2 days after endDate
-      const isWithinGracePeriod = 
+      const isWithinGracePeriod =
         (status.type === "LD" || status.type === "MC") &&
         parsedDate > statusEndDate &&
-        parsedDate <= new Date(statusEndDate.getTime() + 1 * 24 * 60 * 60 * 1000); // 2-day grace period
+        parsedDate <=
+          new Date(statusEndDate.getTime() + 1 * 24 * 60 * 60 * 1000); // 2-day grace period
 
       // Exclude if the status is active on the date or if it falls within the grace period
       return isStatusActive || isWithinGracePeriod;
@@ -311,12 +314,6 @@ async function recruitsParticipationStatus(
   // Filter out null values and return only participating recruits
   return participationStatus.filter((recruit) => recruit !== null) as Recruit[]; // Replace 'Recruit' with the appropriate type if defined
 }
-
-
-
-
-
-
 
 export async function editStrength(data: FormData) {
   const fallOuts = data.get("fall-outs")?.toString() || ""; // Handle empty fallOuts
@@ -339,10 +336,16 @@ export async function editStrength(data: FormData) {
   }
 
   // Split fallouts string into an array of IDs
-  const fallOutsArray = fallOuts ? fallOuts.split(",").map((id) => id.trim()) : [];
+  const fallOutsArray = fallOuts
+    ? fallOuts.split(",").map((id) => id.trim())
+    : [];
 
   // Get recruits participation status
-  const strength = await recruitsParticipationStatus(date, conduct.companyId, fallOutsArray);
+  const strength = await recruitsParticipationStatus(
+    date,
+    conduct.companyId,
+    fallOutsArray
+  );
 
   // Update the conduct with the new recruits and fallouts
   await prisma.conduct.update({
@@ -357,15 +360,26 @@ export async function editStrength(data: FormData) {
   });
 
   // Revalidate the path to update the page after the changes
-  revalidatePath(`/company/${conduct.company.name.toLocaleLowerCase()}/conducts/${conductId}`);
-  return true
+  revalidatePath(
+    `/company/${conduct.company.name.toLocaleLowerCase()}/conducts/${conductId}`
+  );
+  return true;
 }
 
-
-export async function getParticipants(conductId: number): Promise<{recruitId: string, recruitName: string, participated: boolean, reason: string[]}[]> {
+export async function getParticipants(conductId: number): Promise<
+  {
+    recruitId: string;
+    recruitName: string;
+    participated: boolean;
+    reason: string[];
+  }[]
+> {
   const conduct = await prisma.conduct.findUnique({
     where: { id: conductId },
-    include: { recruits: true, company: { include: { recruits: {include: {statuses: true}} } } },
+    include: {
+      recruits: true,
+      company: { include: { recruits: { include: { statuses: true } } } },
+    },
   });
 
   if (!conduct) {
@@ -373,7 +387,7 @@ export async function getParticipants(conductId: number): Promise<{recruitId: st
   }
 
   if (conduct.recruits.length <= 0) {
-    return []
+    return [];
   }
 
   const participants = conduct.recruits; // Recruits that participated in the conduct
@@ -385,65 +399,72 @@ export async function getParticipants(conductId: number): Promise<{recruitId: st
       (participant) => participant.id === recruit.id
     ); // Check if the recruit participated
 
-    const _status = recruit.statuses.filter(status => parseDate(status.startDate) <= parseDate(conduct.date) && parseDate(status.endDate) >= parseDate(conduct.date))
-    
-    const oneDayAgo = parseDate(conduct.date)
+    const _status = recruit.statuses.filter(
+      (status) =>
+        parseDate(status.startDate) <= parseDate(conduct.date) &&
+        parseDate(status.endDate) >= parseDate(conduct.date)
+    );
+
+    const oneDayAgo = parseDate(conduct.date);
     oneDayAgo.setDate(oneDayAgo.getDate() - 1);
 
-    const P1 = recruit.statuses.filter(status => {
-        const endDate = parseDate(status.endDate);
+    const P1 = recruit.statuses.filter((status) => {
+      const endDate = parseDate(status.endDate);
 
-        // Check if the status is only one day expired
-        const isOneDayExpired = endDate < parseDate(conduct.date) && endDate >= oneDayAgo;
-    
-        // Check for the status type being MC or LD
-        const isMCOrLD = status.type === "MC" || status.type === 'LD';
-    
-        return isOneDayExpired && isMCOrLD;
-    })
+      // Check if the status is only one day expired
+      const isOneDayExpired =
+        endDate < parseDate(conduct.date) && endDate >= oneDayAgo;
 
-    const reason: string[] = _status.map(a => 
-      (a.type === "CustomStatus" || a.type === "Other") ? a.remarks ?? '' : a.type
-  );
-  
+      // Check for the status type being MC or LD
+      const isMCOrLD = status.type === "MC" || status.type === "LD";
 
-    (P1.map(p1 => reason.push(`${p1.type.toString()} + 1`)))
+      return isOneDayExpired && isMCOrLD;
+    });
+
+    const reason: string[] = _status.map((a) =>
+      a.type === "CustomStatus" || a.type === "Other" ? a.remarks ?? "" : a.type
+    );
+
+    P1.map((p1) => reason.push(`${p1.type.toString()} + 1`));
 
     return {
       recruitId: recruit.id,
       recruitName: recruit.name,
       participated: participated, // true if in the participants list, false otherwise
-      reason: reason
+      reason: reason,
     };
-    });
+  });
 
   return participationStatus;
 }
 
 export const deleteReportSick = async (data: FormData) => {
-  const id = (data.get("id")?.toString())
+  const id = data.get("id")?.toString();
 
   if (!id) {
-    throw Error("This object does not exist.")
+    throw Error("This object does not exist.");
   }
 
-  const reportSick = await prisma.reportSick.delete({where: {id: parseInt(id)}})
+  const reportSick = await prisma.reportSick.delete({
+    where: { id: parseInt(id) },
+  });
 
-  const company = await prisma.company.findFirst({where: {id: reportSick?.companyId}})
+  const company = await prisma.company.findFirst({
+    where: { id: reportSick?.companyId },
+  });
 
-  revalidatePath(`/company/${company?.name}/report-sick`)
-  
-}
+  revalidatePath(`/company/${company?.name}/report-sick`);
+};
 
 export const setConductingStructure = async (data: FormData) => {
-  const supervisingId  = data.get("supervising")?.toString()
-  const conductingId = data.get("conducting")?.toString()
-  const chiefSafetyId = data.get("chief-safety")?.toString()
+  const supervisingId = data.get("supervising")?.toString();
+  const conductingId = data.get("conducting")?.toString();
+  const chiefSafetyId = data.get("chief-safety")?.toString();
 
-  const conductId = (data.get("conductId")?.toString())
+  const conductId = data.get("conductId")?.toString();
 
   if (!supervisingId || !conductingId || !chiefSafetyId || !conductId) {
-    throw Error("Please fill in all fields for conducting structure")
+    throw Error("Please fill in all fields for conducting structure");
   }
 
   // Step 1: Set fields to null
@@ -456,7 +477,7 @@ export const setConductingStructure = async (data: FormData) => {
     },
   });
 
-// Step 2: Update with new IDs
+  // Step 2: Update with new IDs
   const conduct = await prisma.conduct.update({
     where: { id: parseInt(conductId) },
     data: {
@@ -466,60 +487,67 @@ export const setConductingStructure = async (data: FormData) => {
     },
   });
 
-  console.log("supervising: " + supervisingId)
-  console.log("conducting: " + conductingId)
-  console.log("chiefSafety: " + chiefSafetyId)
+  console.log("supervising: " + supervisingId);
+  console.log("conducting: " + conductingId);
+  console.log("chiefSafety: " + chiefSafetyId);
 
+  const company = await prisma.company.findFirst({
+    where: { id: conduct.companyId },
+  });
 
-  
-  const company = await prisma.company.findFirst({where: {id: conduct.companyId}})
-
-  revalidatePath(`/company/${company?.name.toLowerCase()}/conducts/${conduct.id}`)
-  return true
-}
+  revalidatePath(
+    `/company/${company?.name.toLowerCase()}/conducts/${conduct.id}`
+  );
+  return true;
+};
 
 export const deleteConduct = async (data: FormData) => {
-  const _id = data.get("conductId")?.toString()
+  const _id = data.get("conductId")?.toString();
 
   if (!_id) {
-    throw Error("This conduct does not exist")
+    throw Error("This conduct does not exist");
   }
 
-  const id = parseInt(_id)
+  const id = parseInt(_id);
 
-  const conduct = await prisma.conduct.delete({where: {id}, include: {company: true}})
+  const conduct = await prisma.conduct.delete({
+    where: { id },
+    include: { company: true },
+  });
 
-  redirect(`/company/${conduct.company.name.toLowerCase()}/conducts`)
-
-}
+  redirect(`/company/${conduct.company.name.toLowerCase()}/conducts`);
+};
 
 export async function upsertRecruitIntoConduct(data: FormData) {
-  const conductId = data.get("conductId")?.toString()
-  const recruitId = data.get("recruitId")?.toString()
-
+  const conductId = data.get("conductId")?.toString();
+  const recruitId = data.get("recruitId")?.toString();
 
   if (!conductId || !recruitId) {
-    throw Error("Either this recruit or conduct does not exist")
+    throw Error("Either this recruit or conduct does not exist");
   }
 
   const conduct = await prisma.conduct.findFirst({
-    where: { id: parseInt(conductId), },
-    select: { fallouts: true, recruits: true }, 
-  })
+    where: { id: parseInt(conductId) },
+    select: { fallouts: true, recruits: true },
+  });
 
-  const company = await prisma.company.findFirst({where: {conducts: {some: {id: parseInt(conductId)}}}})
+  const company = await prisma.company.findFirst({
+    where: { conducts: { some: { id: parseInt(conductId) } } },
+  });
 
   if (!conduct || !company) {
-    throw Error("This conduct does not exist")
+    throw Error("This conduct does not exist");
   }
-  
+
   // Remove the recruitId from fallouts if it exists
-  const updatedFallouts = conduct.fallouts.filter(id => id !== recruitId);
-  
+  const updatedFallouts = conduct.fallouts.filter((id) => id !== recruitId);
+
   // Append the recruitId to participating
-  const newRecruit = await prisma.recruit.findFirst({where: {id: recruitId}})
+  const newRecruit = await prisma.recruit.findFirst({
+    where: { id: recruitId },
+  });
   const updatedParticipating = [...conduct.recruits, newRecruit];
-  
+
   // Update the conduct record with new fallouts and participating arrays
   await prisma.conduct.update({
     where: { id: parseInt(conductId) },
@@ -533,7 +561,65 @@ export async function upsertRecruitIntoConduct(data: FormData) {
     },
   });
 
-  revalidatePath(`/company/${company.name.toLowerCase}/conducts/${conductId}`)
+  revalidatePath(`/company/${company.name.toLowerCase}/conducts/${conductId}`);
 
-  return true
+  return true;
+}
+
+export async function addMultipleStatuses(data: FormData) {
+  type StatusEntry = {
+    type: StatusType;
+    startDate: string;
+    endDate: string;
+    remarks?: string | null; // Remarks can be optional or nullable
+  };
+
+  const recruitData: { id: string; name: string; statuses: StatusEntry[] } = {
+    id: data.get("4d")!.toString(),
+    name: data.get("name")!.toString(),
+    statuses: [],
+  };
+
+  // Dynamically extract status data
+  let i = 0;
+  while (data.has(`status-${i}`)) {
+    recruitData.statuses.push({
+      type: getStatusType(data.get(`status-${i}`)!.toString())!,
+      startDate: data.get(`start-date-${i}`)!.toString(),
+      endDate: data.get(`end-date-${i}`)!.toString(),
+      remarks: data.get(`remarks-${i}`)?.toString() || "", // Use optional chaining
+    });
+    i++;
+  }
+
+  // Prepare data for Prisma, assuming the 'type' field is required
+  const statusData = recruitData.statuses.map((status) => {
+    if (!validDate(status.startDate, status.endDate)) {
+      throw Error("Please enter correct dates");
+    }
+    return {
+      recruitId: recruitData.id, // Assuming this is the ID for the recruit
+      type: status.type,
+      startDate: status.startDate,
+      endDate: status.endDate,
+      remarks: status.remarks,
+    };
+  });
+
+  // Create status entries in the database
+  await prisma.status
+    .createMany({ data: statusData })
+    .then(() => {
+      console.log("Statuses created successfully");
+    })
+    .catch((error) => {
+      console.error("Error creating statuses:", error);
+      throw Error("Please make sure all the details are filled correctly");
+    });
+
+  const company = await prisma.company.findFirst({
+    where: { recruits: { some: { id: data.get("4d")!.toString() } } },
+  });
+  revalidatePath(`/company/${company?.name.toLowerCase()}/statuses`);
+  return true;
 }

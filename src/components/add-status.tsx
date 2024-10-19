@@ -18,22 +18,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Commander, StatusType } from "@prisma/client";
-import { useState } from "react";
+import { Commander, Recruit, StatusType } from "@prisma/client";
+import { useEffect, useState } from "react";
 import { handleCreateStatus } from "@/lib/actions";
 import { Switch } from "./ui/switch";
+import axios from "axios";
 
 const AddStatus = ({
   company,
   commanders,
+  justCommander,
 }: {
   company: string;
   commanders: Commander[];
+  justCommander?: boolean;
 }) => {
   const [open, setOpen] = useState<boolean>();
   const [error, setError] = useState<string>();
 
-  const [isCommander, setIsCommander] = useState<boolean>(false);
+  const [isCommander, setIsCommander] = useState<boolean>(
+    justCommander ?? false
+  );
   const [commander, setCommander] = useState<string>();
 
   const [fourD, setFourD] = useState<string>("");
@@ -41,7 +46,43 @@ const AddStatus = ({
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
-  const excludedStatuses = ["MCP1", "MCP2", "LDP1", "LDP2", "ReportSick", "Physio"];
+  const [loading, setLoading] = useState(false);
+  const [recruit, setRecruit] = useState<string>();
+
+  useEffect(() => {
+    const fetchRecruit = async () => {
+      if (fourD && fourD.length === 5) {
+        // Only fetch if id is present
+        try {
+          setLoading(true);
+          const response = await axios.get(`/api/recruit?id=${fourD}`);
+          setRecruit(() => response.data.recruit.name);
+          setError(() => "");
+        } catch (error) {
+          if (error instanceof Error) {
+            setError(() => "Recruit doesn't exist");
+          } else {
+            setError("Something went wrong");
+          }
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setRecruit(() => "");
+      }
+    };
+
+    fetchRecruit();
+  }, [fourD]);
+
+  const excludedStatuses = [
+    "MCP1",
+    "MCP2",
+    "LDP1",
+    "LDP2",
+    "ReportSick",
+    "Physio",
+  ];
 
   const statusTypes = Object.values(StatusType).filter(
     (status) => !excludedStatuses.includes(status)
@@ -81,8 +122,12 @@ const AddStatus = ({
       }}
     >
       <DialogTrigger asChild>
-        <Button className="absolute right-0" onClick={openDialog}>
-          +
+        <Button
+          variant={"ghost"}
+          size={"sm"}
+          className="text-sm flex justify-start"
+        >
+          Commander
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -146,13 +191,17 @@ const AddStatus = ({
                   </SelectContent>
                 </Select>
               )}
-              <div className="flex gap-2 items-center lg:absolute lg:right-6">
+              <Input
+                value={recruit}
+                className="text-zinc-600 !border-transparent !focus-visible:!outline-none !cursor-default w-full"
+              />
+              {/* <div className="flex gap-2 items-center lg:absolute lg:right-6">
                 <p className="text-sm text-zinc-400">Commander</p>
                 <Switch
                   checked={isCommander}
                   onCheckedChange={setIsCommander}
                 />
-              </div>
+              </div> */}
             </div>
 
             <div className="flex items-center gap-6">
