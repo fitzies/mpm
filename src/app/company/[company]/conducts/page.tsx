@@ -44,6 +44,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
         </Button>
         <NewConduct company={company} />
       </div>
+      <div>{conducts.length === 0 ? <p className="w-full mx-auto text-zinc-400 mt-auto">You have no conducts</p> : null}</div>
       <div className="grid lg:grid-cols-4 grid-cols-1 py-4 w-full gap-4">
         {conducts.map((conduct) => {
           return (
