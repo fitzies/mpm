@@ -93,6 +93,11 @@ const Nav = () => {
               Company Insights
             </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={`/company/${companyName}/nominal-roll`}>
+              Nominal Roll
+            </Link>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

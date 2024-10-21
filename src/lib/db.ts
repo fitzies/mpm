@@ -8,7 +8,9 @@ import {
 
 export const getCompany = async (company: string) => {
   return await prisma.company.findFirst({
-    where: { name: company },
+    where: {
+      name: company.substring(0, 1).toUpperCase() + company.substring(1),
+    },
     include: {
       recruits: {
         include: {
