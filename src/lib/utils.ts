@@ -62,7 +62,9 @@ export function getOutOfCampStrength(
       if (
         y.statuses.some(
           (status) =>
-            (status.type === "MC" || status.type === "Other") &&
+            (status.type === "MC" ||
+              status.type === "Other" ||
+              status.type === "BookedOut") &&
             parseDate(status.endDate) >= sgDate &&
             parseInt(status.recruitId!.substring(1, 2)) === platoon
         )
@@ -78,7 +80,9 @@ export function getOutOfCampStrength(
     if (
       y.statuses.some(
         (status) =>
-          (status.type === "MC" || status.type === "Other") &&
+          (status.type === "MC" ||
+            status.type === "Other" ||
+            status.type === "BookedOut") &&
           parseDate(status.endDate) >= sgDate
       )
     ) {
@@ -400,4 +404,12 @@ export const removeSpacesToEnumValue = (value: string) => {
 
 export const formatString = (date: string) => {
   return parseDate(date).toUTCString().split("23")[0];
+};
+
+export const dateToStringDate = (date: Date): string => {
+  const day = String(date.getDate()).padStart(2, "0"); // Get day and pad with leading 0
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so +1 and pad with 0
+  const year = String(date.getFullYear()).slice(-2); // Get last 2 digits of the year
+
+  return `${day}${month}${year}`; // Format as ddmmyy
 };

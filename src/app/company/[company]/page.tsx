@@ -29,7 +29,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
 
   const recruitsOnMC = await getActiveStatuses(
     company.id,
-    [StatusType.MC, StatusType.Other],
+    [StatusType.MC, StatusType.Other, StatusType.BookedOut],
     false
   );
 
@@ -64,7 +64,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
           <Chunk
             title="Recruit Strength"
             body={`${
-              company.recruits.length - recruitsOnMC.length
+              company.recruits.length - getOutOfCampStrength(company.recruits)
             } / ${company.recruits.length.toString()}`}
           ></Chunk>
           <Chunk

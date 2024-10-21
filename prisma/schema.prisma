@@ -79,6 +79,8 @@ enum StatusType {
   MCP2
   LDP1
   LDP2
+
+  BookedOut
 }
 
 model Conduct {

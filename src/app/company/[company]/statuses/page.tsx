@@ -71,7 +71,9 @@ const StatusTable = ({
                   {status.startDate} - {status.endDate}
                 </TableCell>
                 <TableCell className="text-right">
-                  {status.type === "Other" || status.type === "CustomStatus"
+                  {status.type === "BookedOut"
+                    ? "Booked out"
+                    : status.type === "Other" || status.type === "CustomStatus"
                     ? status.remarks
                     : plusToString(status.type)}
                 </TableCell>
@@ -103,7 +105,13 @@ const Page = async ({
 
   const allStatusesList = await getActiveStatuses(
     company.id,
-    [StatusType.CustomStatus, StatusType.LD, StatusType.MC, StatusType.Other],
+    [
+      StatusType.CustomStatus,
+      StatusType.LD,
+      StatusType.MC,
+      StatusType.Other,
+      StatusType.BookedOut,
+    ],
     true
   );
 
@@ -116,11 +124,18 @@ const Page = async ({
   const outOfCampList = await getActiveStatuses(company.id, [
     StatusType.Other,
     StatusType.MC,
+    StatusType.BookedOut,
   ]);
 
   const commanderStatusList = await getCommanderActiveStatuses(
     company.id,
-    [StatusType.CustomStatus, StatusType.LD, StatusType.MC, StatusType.Other],
+    [
+      StatusType.CustomStatus,
+      StatusType.LD,
+      StatusType.MC,
+      StatusType.Other,
+      StatusType.BookedOut,
+    ],
     true
   );
 

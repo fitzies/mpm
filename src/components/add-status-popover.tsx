@@ -3,6 +3,7 @@ import AddStatus from "./add-status";
 import { Bubble } from "./add-status2";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import Bookout from "./book-out";
 
 const AddStatusPopover = ({
   company,
@@ -23,6 +24,7 @@ const AddStatusPopover = ({
             company={company.name}
             justCommander
           />
+          <Bookout company={company} />
         </PopoverContent>
       </Popover>
     </>

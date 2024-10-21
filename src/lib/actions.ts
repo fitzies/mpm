@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { deleteStatus } from "./db";
 import prisma from "./prisma";
 import {
+  dateToStringDate,
   decrypt,
   encrypt,
   getDate,
@@ -623,3 +624,74 @@ export async function addMultipleStatuses(data: FormData) {
   revalidatePath(`/company/${company?.name.toLowerCase()}/statuses`);
   return true;
 }
+
+export const bookOutRecruits = async (data: FormData) => {
+  const { ids, wholeCompany, companyId } = {
+    ids: data.get("4ds")?.toString(),
+    wholeCompany: data.get("whole-company")?.toString(),
+    companyId: data.get("company-id")?.toString(),
+  };
+
+  const startDate = getDate();
+  const endDate = dateToStringDate(
+    new Date(new Date().setDate(new Date().getDate() + 2))
+  );
+
+  if (!companyId || (!ids && !wholeCompany)) {
+    throw Error("Please fill in all the necessary fields");
+  }
+  const company = await prisma.company.findFirst({
+    where: { id: parseInt(companyId) },
+  });
+
+  if (ids && !wholeCompany) {
+    const idsList = ids.split(", "); // Split the string into an array of recruit IDs
+
+    try {
+      const res = await prisma.status.createMany({
+        data: idsList.map((recruitId) => ({
+          startDate,
+          endDate,
+          type: "BookedOut",
+          recruitId, // Assign recruitId from the list
+        })),
+      });
+      if (res.count === idsList.length) {
+        revalidatePath(`/company/${company?.name.toLowerCase()}/statuses`);
+        return true;
+      }
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) throw Error(error.message);
+    }
+  }
+
+  if (wholeCompany && !ids) {
+    const recruits = await prisma.recruit.findMany({
+      where: {
+        companyId: parseInt(companyId),
+      },
+    });
+    const statusesData = recruits.map((recruit) => ({
+      startDate,
+      endDate,
+      type: StatusType.BookedOut,
+      recruitId: recruit.id, // Use the recruit ID from the fetched recruits
+    }));
+
+    try {
+      const res = await prisma.status.createMany({
+        data: statusesData,
+      });
+      if (res.count === recruits.length && res) {
+        revalidatePath(`/company/${company?.name.toLowerCase()}/statuses`);
+        return true;
+      }
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) throw Error(error.message);
+    }
+  }
+
+  throw Error("Something went wrong");
+};
