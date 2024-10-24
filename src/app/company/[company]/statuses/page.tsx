@@ -110,7 +110,7 @@ const Page = async ({
       StatusType.LD,
       StatusType.MC,
       StatusType.Other,
-      StatusType.BookedOut,
+      // StatusType.BookedOut,
     ],
     true
   );
@@ -124,7 +124,7 @@ const Page = async ({
   const outOfCampList = await getActiveStatuses(company.id, [
     StatusType.Other,
     StatusType.MC,
-    StatusType.BookedOut,
+    // StatusType.BookedOut,
   ]);
 
   const commanderStatusList = await getCommanderActiveStatuses(
@@ -134,7 +134,7 @@ const Page = async ({
       StatusType.LD,
       StatusType.MC,
       StatusType.Other,
-      StatusType.BookedOut,
+      // StatusType.BookedOut,
     ],
     true
   );

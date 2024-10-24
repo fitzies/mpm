@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { deleteStatus } from "./db";
+import { deleteStatus, getActiveStatuses, getCompany } from "./db";
 import prisma from "./prisma";
 import {
   dateToStringDate,
@@ -695,3 +695,54 @@ export const bookOutRecruits = async (data: FormData) => {
 
   throw Error("Something went wrong");
 };
+
+export async function bookOut(data: FormData) {
+  const unparsed4ds = data.get("4ds")?.toString();
+  const companyId = data.get("company-id")?.toString();
+
+  if (!unparsed4ds || !companyId) {
+    throw Error("Something went very wrong");
+  }
+
+  const company = await prisma.company.findFirst({
+    where: { id: parseInt(companyId) },
+  });
+
+  if (!company) {
+    throw Error("This company does not exist");
+  }
+
+  const ids = JSON.parse(unparsed4ds);
+  const startDate = getDate();
+  const endDate = dateToStringDate(
+    new Date(new Date().setDate(new Date().getDate() + 2))
+  );
+
+  let recruits = await prisma.recruit.findMany({
+    where: {
+      companyId: parseInt(companyId),
+    },
+  });
+
+  recruits = recruits.filter((recruit) => ids.includes(recruit.id));
+
+  const statusesData = recruits.map((recruit) => ({
+    startDate,
+    endDate,
+    type: StatusType.BookedOut,
+    recruitId: recruit.id, // Use the recruit ID from the fetched recruits
+  }));
+
+  try {
+    const res = await prisma.status.createMany({
+      data: statusesData,
+    });
+    if (res.count === recruits.length && res) {
+      revalidatePath(`/company/${company.name.toLowerCase()}/nominal-roll`);
+      return true;
+    }
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Error) throw Error(error.message);
+  }
+}

@@ -57,3 +57,8 @@ type ReportSickWithDetails = {
   statusId?: number | null; // Optional status ID
   status?: Status | null; // Optional relation to Status
 };
+
+export type DataTableType = {
+  headers: string[];
+  rows: (string | JSX.Element)[][];
+};

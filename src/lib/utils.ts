@@ -6,7 +6,7 @@ import {
   CommanderWithStatuses,
   RecruitWithStatuses,
 } from "../../types";
-import { getRecruits } from "./db";
+import { getActiveStatuses, getRecruits } from "./db";
 import { Company, Recruit, StatusType } from "@prisma/client";
 import { paradeStateMessage } from "./parade-state-message";
 import axios from "axios";
@@ -412,4 +412,19 @@ export const dateToStringDate = (date: Date): string => {
   const year = String(date.getFullYear()).slice(-2); // Get last 2 digits of the year
 
   return `${day}${month}${year}`; // Format as ddmmyy
+};
+
+export const checkRecruitOutOfCamp = (
+  recruitId: string,
+  statuses: ActiveStatusWithRecruit[]
+): boolean => {
+  // Check if any status belongs to the recruit and indicates they are out of camp
+  return statuses.some((status) => {
+    return (
+      status.recruit?.id === recruitId &&
+      (status.type === StatusType.BookedOut ||
+        status.type === StatusType.Other ||
+        status.type === StatusType.MC)
+    );
+  });
 };

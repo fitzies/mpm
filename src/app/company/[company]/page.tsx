@@ -89,14 +89,18 @@ const Page = async ({ params }: { params: { company: string } }) => {
           <Dashboard
             title="Statuses"
             headers={{ left: "Recruit", right: "Status" }}
-            data={recruitsOnStatus.slice(0, 5)}
+            data={recruitsOnStatus
+              .slice(0, 5)
+              .filter((recruit) => recruit.type !== StatusType.BookedOut)}
             length={recruitsOnStatus.length}
             href={`${params.company}/statuses`}
           />
           <Dashboard
             title="Out of Camp"
             headers={{ left: "Recruit", right: "Reason" }}
-            data={recruitsOnMC.slice(0, 5)}
+            data={recruitsOnMC
+              .slice(0, 5)
+              .filter((recruit) => recruit.type !== StatusType.BookedOut)}
             length={recruitsOnMC.length}
             href={`${params.company}/statuses`}
           />

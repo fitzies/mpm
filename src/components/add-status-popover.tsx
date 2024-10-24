@@ -24,7 +24,7 @@ const AddStatusPopover = ({
             company={company.name}
             justCommander
           />
-          <Bookout company={company} />
+          {/* <Bookout company={company} /> */}
         </PopoverContent>
       </Popover>
     </>

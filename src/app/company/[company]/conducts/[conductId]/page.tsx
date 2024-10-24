@@ -90,11 +90,6 @@ const Page = async ({
             title="Are you absolutely sure?"
             description=" This action cannot be undone. This will permanently delete this conduct and remove all data about it from our servers."
             btn={<Button variant={"destructive"}>Delete</Button>}
-            loadingBtn={
-              <Button variant={"destructive"} disabled>
-                ...
-              </Button>
-            }
             action={deleteConduct}
           >
             <input className="hidden" name="conductId" value={conduct.id} />
