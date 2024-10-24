@@ -46,7 +46,7 @@ export default async function Page({
               status.type === StatusType.Other)
           ) {
             console.log(status.type);
-            return status.type;
+            return status.type === "Other" ? status.remarks : status.type;
           } else {
             return null;
           }
