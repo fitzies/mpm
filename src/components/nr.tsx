@@ -27,7 +27,7 @@ export default function NR({
 
   return (
     <div>
-      <div className="w-full flex justify-end items-center gap-2">
+      <div className="w-full flex justify-end items-center gap-2 mb-4">
         <CustomDialog
           trigger={
             <Button
@@ -70,7 +70,7 @@ export default function NR({
           action={async (data) => {
             const res = await createRecruits(data);
             if (res === true) {
-              toast({ title: "Recruits have been deleted" });
+              toast({ title: "Recruits have been added" });
             }
           }}
           btn={<Button className="w-full">Create</Button>}
