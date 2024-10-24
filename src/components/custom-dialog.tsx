@@ -56,6 +56,10 @@ export const CustomDialog = ({
     } finally {
       setLoading(false); // Reset loading state
     }
+
+    if (error === "") {
+      setOpen(() => false);
+    }
   };
 
   return (
@@ -72,10 +76,8 @@ export const CustomDialog = ({
             ? btn ?? <Button>Submit</Button>
             : loadingBtn ?? <Button disabled>...</Button>}
         </form>
-      </DialogContent>
-      <DialogFooter>
         <p className="text-sm text-red-400">{error}</p>
-      </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 };

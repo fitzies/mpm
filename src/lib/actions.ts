@@ -746,3 +746,136 @@ export async function bookOut(data: FormData) {
     if (error instanceof Error) throw Error(error.message);
   }
 }
+
+export const deleteRecruits = async (data: FormData) => {
+  try {
+    const recruits = JSON.parse(data.get("recruits")!.toString());
+
+    if (!recruits || !Array.isArray(recruits)) {
+      throw new Error("Invalid recruits data");
+    }
+
+    const recruitIds = recruits.map((arr: string[]) => {
+      if (Array.isArray(arr) && arr.length > 0) {
+        return arr[0]; // Assuming arr[0] contains the recruit ID
+      } else {
+        throw new Error("Invalid recruit entry format");
+      }
+    });
+
+    if (recruitIds.length === 0) {
+      throw new Error("No valid recruit IDs found to delete");
+    }
+
+    // Fetch the recruits to get their company information before deleting
+    const recruitsToDelete = await prisma.recruit.findMany({
+      where: {
+        id: {
+          in: recruitIds,
+        },
+      },
+      select: {
+        id: true,
+        company: true, // Assuming recruits have a 'company' field
+      },
+    });
+
+    if (recruitsToDelete.length === 0) {
+      throw new Error("No recruits found with the provided IDs");
+    }
+
+    // Extract the company from the first recruit (assuming all belong to the same company)
+    const company = recruitsToDelete[0].company;
+
+    // Proceed with deletion
+    const deletedRecruits = await prisma.recruit.deleteMany({
+      where: {
+        id: {
+          in: recruitIds,
+        },
+      },
+    });
+
+    // Log success message
+    console.log(`Successfully deleted recruits: ${recruitIds.join(", ")}`);
+
+    // Revalidate the path for the company
+    revalidatePath(`/company/${company.name.toLowerCase()}/nominal-roll`);
+  } catch (error) {
+    console.error("Error deleting recruits:", error);
+    throw new Error("Failed to delete recruits. Please try again.");
+  }
+  return true;
+};
+
+// CREATE RECRUITS
+export const createRecruits = async (data: FormData) => {
+  const input = data.get("new-recruits")?.toString();
+  const companyIdStr = data.get("company-id")?.toString(); // Get the company ID as a string
+
+  if (!input || !companyIdStr) {
+    throw new Error("Something went wrong");
+  }
+
+  // Convert companyId to number
+  const companyId = parseInt(companyIdStr, 10);
+  if (isNaN(companyId)) {
+    throw new Error("Invalid company ID");
+  }
+
+  const recruits = input
+    .split("\n")
+    .map((line) => line.split("\t").map((item) => item.trim()));
+
+  // Create an array of recruit data
+  const recruitData = recruits.map(([a, name]) => {
+    return {
+      id: a.split(" ")[0], // Recruit ID
+      name: a.split(" ").slice(1).join(" "), // Constructed name from the rest of the elements
+      companyId: companyId, // Include companyId as a number
+    };
+  });
+
+  try {
+    // Check for existing recruit IDs in the database
+    const existingRecruits = await prisma.recruit.findMany({
+      where: {
+        id: {
+          in: recruitData.map((recruit) => recruit.id), // Get array of recruit IDs
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (existingRecruits.length > 0) {
+      // If any recruits already exist, throw an error
+      const existingIds = existingRecruits
+        .map((recruit) => recruit.id)
+        .join(", ");
+      throw new Error(`Recruit ID(s) already exist: ${existingIds}`);
+    }
+
+    // Create new recruits if no existing IDs were found
+    await prisma.recruit.createMany({
+      data: recruitData,
+    });
+
+    const company = await prisma.company.findFirst({
+      where: { id: companyId },
+    });
+
+    revalidatePath(`/company/${company!.name.toLowerCase()}/nominal-roll`);
+    console.log("Recruits added successfully.");
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error adding recruits:", error);
+      throw new Error(`Failed to add recruits: ${error.message}`);
+    }
+    throw new Error("Something went very wrong");
+    // Log the error for debugging
+  }
+
+  return true;
+};

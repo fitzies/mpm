@@ -6,6 +6,7 @@ import { StatusType } from "@prisma/client";
 import { checkRecruitOutOfCamp, getLatestConduct } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Check, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default async function Page({
   params,
