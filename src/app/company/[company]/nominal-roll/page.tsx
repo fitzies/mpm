@@ -40,7 +40,7 @@ export default async function Page({
       getLatestConduct(recruit, "SOC"),
       getLatestConduct(recruit, "RouteMarch"),
       "Nil",
-      <div className="opacity-50 hover:opacity-100">
+      <div className="opacity-50 hover:opacity-100" key={recruit.polarUserId}>
         {recruit.polarUserId && recruit.polarAccessToken ? (
           <Check className="scale-75 " />
         ) : (
@@ -48,9 +48,13 @@ export default async function Page({
         )}
       </div>,
       checkRecruitOutOfCamp(recruit.id, statuses) ? (
-        <Badge variant={"destructive"}>No</Badge>
+        <Badge variant={"destructive"} key={recruit.id + " booked in"}>
+          No
+        </Badge>
       ) : (
-        <Badge variant={"secondary"}>Yes</Badge>
+        <Badge variant={"secondary"} key={recruit.id + " booked out"}>
+          Yes
+        </Badge>
       ),
     ]),
   };
