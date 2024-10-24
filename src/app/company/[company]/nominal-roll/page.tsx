@@ -3,7 +3,11 @@ import { getActiveStatuses, getCompany } from "@/lib/db";
 import { DataTableType, RecruitWithStatuses } from "../../../../../types";
 import NR from "@/components/nr";
 import { StatusType } from "@prisma/client";
-import { checkRecruitOutOfCamp, parseDate } from "@/lib/utils";
+import {
+  checkRecruitOutOfCamp,
+  getLatestConduct,
+  parseDate,
+} from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 export default async function Page({
@@ -32,27 +36,30 @@ export default async function Page({
   );
 
   const tableData: DataTableType = {
-    headers: ["4D", "Name", "Reason", "Booked in"],
+    headers: ["4D", "Name", "SOC", "RM", "HA", "Booked in"],
     rows: recruits.map((recruit) => [
       recruit.id,
       recruit.name,
-      recruit.statuses
-        .map((status) => {
-          if (
-            parseDate(status.startDate) <= new Date() &&
-            parseDate(status.endDate) >= new Date() &&
-            (status.type === StatusType.BookedOut ||
-              status.type === StatusType.MC ||
-              status.type === StatusType.Other)
-          ) {
-            console.log(status.type);
-            return status.type === "Other" ? status.remarks : status.type;
-          } else {
-            return null;
-          }
-        })
-        .filter((status) => status !== null)
-        .join(", "),
+      getLatestConduct(recruit, "SOC"),
+      getLatestConduct(recruit, "RouteMarch"),
+      "Nil",
+      // recruit.statuses
+      //   .map((status) => {
+      //     if (
+      //       parseDate(status.startDate) <= new Date() &&
+      //       parseDate(status.endDate) >= new Date() &&
+      //       (status.type === StatusType.BookedOut ||
+      //         status.type === StatusType.MC ||
+      //         status.type === StatusType.Other)
+      //     ) {
+      //       console.log(status.type);
+      //       return status.type === "Other" ? status.remarks : status.type;
+      //     } else {
+      //       return null;
+      //     }
+      //   })
+      //   .filter((status) => status !== null)
+      //   .join(", "),
       checkRecruitOutOfCamp(recruit.id, statuses) ? (
         <Badge variant={"destructive"}>No</Badge>
       ) : (

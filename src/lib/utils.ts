@@ -4,10 +4,17 @@ import {
   ActiveStatusWithCommander,
   ActiveStatusWithRecruit,
   CommanderWithStatuses,
+  RecruitWithConducts,
   RecruitWithStatuses,
 } from "../../types";
-import { getActiveStatuses, getRecruits } from "./db";
-import { Company, Recruit, StatusType } from "@prisma/client";
+import { getRecruits } from "./db";
+import {
+  Company,
+  Conduct,
+  ConductType,
+  Recruit,
+  StatusType,
+} from "@prisma/client";
 import { paradeStateMessage } from "./parade-state-message";
 import axios from "axios";
 import prisma from "./prisma";
@@ -428,3 +435,20 @@ export const checkRecruitOutOfCamp = (
     );
   });
 };
+
+export function getLatestConduct(
+  recruit: RecruitWithConducts,
+  conductType: "SOC" | "RouteMarch"
+) {
+  const conduct =
+    conductType === "SOC" ? ConductType.SOC : ConductType.RouteMarch;
+
+  const recruitsConducts = recruit.conducts.filter(
+    (c: Conduct) => c.type === conduct
+  );
+
+  if (recruitsConducts.length <= 0) {
+    return `None`;
+  }
+  return `${addSpacesToEnumValue(conductType)} ${recruitsConducts.length}`;
+}

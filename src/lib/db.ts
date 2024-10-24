@@ -15,6 +15,7 @@ export const getCompany = async (company: string) => {
       recruits: {
         include: {
           statuses: true, // Include the statuses of each recruit
+          conducts: true,
         },
       },
       commanders: { include: { statuses: true } }, // Include commanders

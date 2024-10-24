@@ -4,6 +4,10 @@ type RecruitWithStatuses = Recruit & {
   statuses: Status[];
 };
 
+type RecruitWithConducts = Recruit & {
+  conducts: Conduct[];
+};
+
 type CommanderWithStatuses = Commander & {
   statuses: Status[];
 };
