@@ -1,91 +1,15 @@
 import PageWrapper from "@/components/page-wrapper";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   getActiveStatuses,
   getCommanderActiveStatuses,
   getCompany,
 } from "@/lib/db";
-import { Company, StatusType } from "@prisma/client";
-import {
-  ActiveStatusWithCommander,
-  ActiveStatusWithRecruit,
-} from "../../../../../types";
-import { filterResults, plusToString } from "@/lib/utils";
-import CellEdit from "@/components/cell-edit";
-// import AddStatus from "@/components/add-status2";
-// import AddStatus from "@/components/add-status";
+import { StatusType } from "@prisma/client";
 import Search from "@/components/search";
 
-import { sort_by_name } from "@/lib/utils";
 import AddStatusPopover from "@/components/add-status-popover";
-
-const StatusTable = ({
-  statuses,
-  company,
-  query,
-}: {
-  statuses: ActiveStatusWithRecruit[] | ActiveStatusWithCommander[];
-  company: Company;
-  query: string;
-}) => {
-  statuses = statuses.sort(sort_by_name());
-
-  return (
-    <div>
-      <Table>
-        <TableCaption>List of statuses</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Recruit</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead className="text-right">Status</TableHead>
-            <TableHead className="text-right">
-              <span className="sr-only">Actions</span>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filterResults(query, statuses).map(
-            (
-              status: ActiveStatusWithRecruit | ActiveStatusWithCommander,
-              index
-            ) => (
-              <TableRow key={status.endDate + index}>
-                <TableCell className="font-medium">
-                  {/* Check if it's a recruit or commander */}
-                  {"recruit" in status
-                    ? `${status.recruit?.id} ${status.recruit?.name}`
-                    : `${status.commander?.name}`}
-                </TableCell>
-                <TableCell>
-                  {status.startDate} - {status.endDate}
-                </TableCell>
-                <TableCell className="text-right">
-                  {status.type === "BookedOut"
-                    ? "Booked out"
-                    : status.type === "Other" || status.type === "CustomStatus"
-                    ? status.remarks
-                    : plusToString(status.type)}
-                </TableCell>
-                <CellEdit status={status} company={company} />
-              </TableRow>
-            )
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  );
-};
+import { StatusTable } from "@/components/status-table";
 
 const Page = async ({
   params,
@@ -100,7 +24,11 @@ const Page = async ({
   const company = await getCompany(companyName);
 
   if (!company) {
-    return <>No company found</>;
+    return (
+      <PageWrapper className="w-full h-screen flex justify-center items-center">
+        <p>No company found</p>
+      </PageWrapper>
+    );
   }
 
   const allStatusesList = await getActiveStatuses(
@@ -155,7 +83,6 @@ const Page = async ({
             <TabsTrigger value="Out of camp">Out of camp</TabsTrigger>
             <TabsTrigger value="Commanders">CR</TabsTrigger>
           </TabsList>
-          {/* <AddStatus company={params.company} commanders={company.commanders} /> */}
           <AddStatusPopover company={company} />
         </div>
         <TabsContent value="All" className="w-full">
