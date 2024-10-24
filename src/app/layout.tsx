@@ -5,6 +5,8 @@ import { Inter } from "next/font/google";
 import Nav from "@/components/nav";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react";
+import Loading from "./loading";
+import { Suspense } from "react";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({ subsets: ["latin"] });
@@ -34,7 +36,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Nav />
-          {children}
+          <Suspense fallback={<Loading />}>{children}</Suspense>
           <Toaster />
           <Analytics />
         </ThemeProvider>
