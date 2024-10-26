@@ -30,6 +30,7 @@ import { Textarea } from "./ui/textarea";
 import { Switch } from "./ui/switch";
 import { handleBarrackDamageForm } from "@/lib/actions";
 import { barrackDamageSchema } from "@/lib/form-schemas";
+import Spinner from "./spinner";
 
 export type FormSchema = z.infer<typeof barrackDamageSchema>;
 
@@ -43,6 +44,8 @@ export default function BarrackDamageForm() {
       severe: false,
     },
   });
+
+  const { isSubmitting } = form.formState;
 
   const barrackDamageType = [
     "Electrical",
@@ -233,7 +236,13 @@ export default function BarrackDamageForm() {
           )}
         />
 
-        <Button className="w-full">Submit</Button>
+        {isSubmitting ? (
+          <Button disabled>
+            <Spinner className="scale-75" />
+          </Button>
+        ) : (
+          <Button className="w-full">Submit</Button>
+        )}
       </form>
     </Form>
   );
