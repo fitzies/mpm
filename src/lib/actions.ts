@@ -892,6 +892,7 @@ export const handleBarrackDamageForm = async (data: FormData) => {
   );
 
   // Adjust date and boolean fields
+
   const parsedData = {
     ...formDataObject,
     dateReported: new Date(JSON.parse(formDataObject["date-reported"] || "")),
@@ -920,6 +921,39 @@ export const handleBarrackDamageForm = async (data: FormData) => {
   });
 
   if (res) {
+    const telegram_bot = "7550508137:AAGFft3OfadyhDSqVtgkWYlY6mhIwpK8780";
+    const telegram_chat_id = "-1002282901616";
+
+    const message = `${res.name} submitted a new ${
+      res.type
+    } barrack damage on ${dateToStringDate(res.dateReported)} from ${
+      res.company
+    } company.\n\nDescription: ${res.description}\n\nSevere: ${
+      res.severe ? "Yes" : "No"
+    }`;
+
+    await sendTelegram(telegram_bot, telegram_chat_id, message);
     redirect("/barrack-damages/form/submitted");
   }
 };
+
+export async function sendTelegram(
+  botToken: string,
+  chatId: string,
+  text: string
+) {
+  const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+  try {
+    const response = await axios.post(telegramUrl, {
+      chat_id: chatId,
+      text,
+    });
+    console.log(response);
+  } catch (error) {
+    if (error instanceof Error) console.log(error.message);
+    else {
+      console.log("Something went wrong");
+    }
+  }
+}

@@ -23,14 +23,13 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { cn, parseDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "./ui/calendar";
 import { Textarea } from "./ui/textarea";
 import { Switch } from "./ui/switch";
 import { handleBarrackDamageForm } from "@/lib/actions";
 import { barrackDamageSchema } from "@/lib/form-schemas";
-import { redirect } from "next/navigation";
 
 export type FormSchema = z.infer<typeof barrackDamageSchema>;
 
@@ -41,12 +40,9 @@ export default function BarrackDamageForm() {
       company: "",
       name: "",
       description: "",
+      severe: false,
     },
   });
-
-  const onSubmit = (values: FormSchema) => {
-    console.log(values);
-  };
 
   const barrackDamageType = [
     "Electrical",
@@ -66,7 +62,7 @@ export default function BarrackDamageForm() {
     formData.append("description", values.description);
     formData.append("severe", JSON.stringify(values.severe));
     formData.append("type", values.type);
-    const res = await handleBarrackDamageForm(formData);
+    await handleBarrackDamageForm(formData);
   };
 
   return (
@@ -75,6 +71,13 @@ export default function BarrackDamageForm() {
         onSubmit={form.handleSubmit(handleSubmit)}
         className="lg:w-1/3 w-full mx-auto flex flex-col gap-4 px-4"
       >
+        <div>
+          <h1 className="text-2xl font-bold">Submit a new barrack damage</h1>
+          <p className="text-zinc-400 text-sm">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse,
+            beatae?
+          </p>
+        </div>
         <FormField
           control={form.control}
           name="name"
@@ -109,7 +112,7 @@ export default function BarrackDamageForm() {
                   <SelectItem value="HQ">HQ</SelectItem>
                 </SelectContent>
               </Select>
-              <FormDescription>Your company will be public.</FormDescription>
+              {/* <FormDescription>Your company will be public.</FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
@@ -136,9 +139,9 @@ export default function BarrackDamageForm() {
                   })}
                 </SelectContent>
               </Select>
-              <FormDescription>
+              {/* <FormDescription>
                 This will help categorize damages.
-              </FormDescription>
+              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
@@ -156,9 +159,9 @@ export default function BarrackDamageForm() {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
+              {/* <FormDescription>
                 This will provide more insight on the damage.
-              </FormDescription>
+              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
@@ -201,9 +204,9 @@ export default function BarrackDamageForm() {
                   />
                 </PopoverContent>
               </Popover>
-              <FormDescription>
+              {/* <FormDescription>
                 This is required for accounting.
-              </FormDescription>
+              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
@@ -216,7 +219,7 @@ export default function BarrackDamageForm() {
               <div className="space-y-0.5">
                 <FormLabel className="text-base">Severe</FormLabel>
                 <FormDescription>
-                  This will priotise this damage above all others
+                  This prioritizes this barrack damage over all others.
                 </FormDescription>
               </div>
               <FormControl>
