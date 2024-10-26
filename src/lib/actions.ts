@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { deleteStatus, getActiveStatuses, getCompany } from "./db";
+import { deleteStatus } from "./db";
 import prisma from "./prisma";
 import {
   dateToStringDate,
@@ -14,11 +14,17 @@ import {
   validDate,
   validOneDate,
 } from "./utils";
-import { ConductType, Recruit, StatusType } from "@prisma/client";
+import {
+  BarrackDamageType,
+  ConductType,
+  Recruit,
+  StatusType,
+} from "@prisma/client";
 import axios from "axios";
 import { paradeStateMessage } from "./parade-state-message";
 import { SessionData } from "../../types";
 import { redirect } from "next/navigation";
+import { barrackDamageSchema } from "./form-schemas";
 
 export const handleDeleteStatus = async (data: FormData) => {
   const statusId = data.get("statusId");
@@ -878,4 +884,42 @@ export const createRecruits = async (data: FormData) => {
   }
 
   return true;
+};
+
+export const handleBarrackDamageForm = async (data: FormData) => {
+  const formDataObject = Object.fromEntries(
+    Array.from(data.entries(), ([key, value]) => [key, value.toString()])
+  );
+
+  // Adjust date and boolean fields
+  const parsedData = {
+    ...formDataObject,
+    dateReported: new Date(JSON.parse(formDataObject["date-reported"] || "")),
+    severe: formDataObject["severe"]
+      ? JSON.parse(formDataObject["severe"])
+      : undefined,
+  };
+
+  // Parse and validate data using Zod
+  const result = barrackDamageSchema.safeParse(parsedData);
+
+  if (!result.success) {
+    console.error("Validation errors:", result.error);
+    return false;
+  }
+
+  // Use validated data in Prisma create, omitting `company` string
+  const { ...dataToSave } = result.data;
+
+  const res = await prisma.barrackDamage.create({
+    data: {
+      ...dataToSave,
+      severe: result.data.severe ?? false,
+      type: result.data.type as BarrackDamageType, // Ensure type matches enum
+    },
+  });
+
+  if (res) {
+    redirect("/barrack-damages/form/submitted");
+  }
 };

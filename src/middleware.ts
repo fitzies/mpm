@@ -3,13 +3,13 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const session = request.cookies.get("session")?.value;
 
-  // Check if the path starts with '/polar'
   const isPolarRoute = request.nextUrl.pathname.startsWith("/polar");
-  // Check if the path is '/login'
   const isLoginRoute = request.nextUrl.pathname === "/login";
+  const isBarrackDamageForm =
+    request.nextUrl.pathname === "/barrack-damages/form";
 
   // Redirect to /login if user is not logged in and not on /login or /polar routes
-  if (!session && !isLoginRoute && !isPolarRoute) {
+  if (!session && !isLoginRoute && !isPolarRoute && !isBarrackDamageForm) {
     return Response.redirect(new URL("/login", request.url));
   }
 

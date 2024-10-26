@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, User } from "lucide-react";
+import { ArrowUpRight, Sparkles, User } from "lucide-react";
 import Link from "next/link"; // Import Link from next/link
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -42,6 +42,7 @@ const Nav = () => {
   if (
     pathname === "/" ||
     pathname.includes("/polar") ||
+    pathname.includes("/barrack-damages") ||
     pathname.includes("/login")
   ) {
     return null;
@@ -84,18 +85,35 @@ const Nav = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
           {/* <DropdownMenuItem asChild>
             <Link href={`/profile`}>Profile</Link>
           </DropdownMenuItem> */}
           <DropdownMenuItem asChild>
-            <Link href={`/company/${companyName}/insights`}>
+            <Link
+              href={`/company/${companyName}/insights`}
+              className="cursor-pointer"
+            >
               Company Insights
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href={`/company/${companyName}/nominal-roll`}>
+            <Link
+              href={`/company/${companyName}/nominal-roll`}
+              className="cursor-pointer"
+            >
               Nominal Roll
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel>Other</DropdownMenuLabel>
+          <DropdownMenuItem asChild>
+            <Link
+              href={`/barrack-damages`}
+              className="cursor-pointer"
+              target="_blank"
+            >
+              Barrack Damages
+              <ArrowUpRight className="scale-75" />
             </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>

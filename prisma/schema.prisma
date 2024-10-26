@@ -132,3 +132,25 @@ model ReportSick {
   statusId Int?
   status   Status? @relation(fields: [statusId], references: [id])
 }
+
+enum BarrackDamageType {
+  Electrical
+  Structural
+  Plumbing
+  Doors
+  Windows
+  Furniture
+  Others
+}
+
+model BarrackDamage {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  type         BarrackDamageType
+  description  String
+  dateReported DateTime
+
+  severe  Boolean
+  company String
+}

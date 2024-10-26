@@ -452,3 +452,18 @@ export function getLatestConduct(
   }
   return `${addSpacesToEnumValue(conductType)} ${recruitsConducts.length}`;
 }
+
+export const getStatusColor = (status: string) => {
+  switch (status) {
+    case "Minimal":
+      return "bg-green-500";
+    case "Minor":
+      return "bg-yellow-500";
+    case "Moderate":
+      return "bg-orange-500";
+    case "Severe":
+      return "bg-red-500";
+    default:
+      return "bg-gray-500";
+  }
+};

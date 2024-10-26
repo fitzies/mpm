@@ -301,3 +301,7 @@ export const getRSOCount = async (companyId: number) => {
 
   return counter;
 };
+
+export const getBarrackDamages = async () => {
+  return await prisma.barrackDamage.findMany();
+};
