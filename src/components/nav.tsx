@@ -54,6 +54,7 @@ const Nav = () => {
     pathname.includes("/polar") ||
     pathname.includes("/barrack-damages") ||
     pathname.includes("/post-action-review") ||
+    pathname.includes("/post-action-review/form") ||
     pathname.includes("/login")
   ) {
     return null;
@@ -156,7 +157,7 @@ const Nav = () => {
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link
-                  href={`/post-action-review`}
+                  href={`/post-action-review/form`}
                   className="cursor-pointer"
                   target="_blank"
                 >
@@ -168,6 +169,7 @@ const Nav = () => {
           </DropdownMenu>
         </div>
       </div>
+
       <motion.nav
         className="flex-col px-8 py-8 gap-4 fixed z-50 bg-black w-full h-screen lg:hidden lg:bg-transparent flex"
         variants={variants}
