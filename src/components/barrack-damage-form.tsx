@@ -113,6 +113,7 @@ export default function BarrackDamageForm() {
                   <SelectItem value="Charlie">Charlie</SelectItem>
                   <SelectItem value="Support">Support</SelectItem>
                   <SelectItem value="HQ">HQ</SelectItem>
+                  <SelectItem value="MSC">MSC</SelectItem>
                 </SelectContent>
               </Select>
               {/* <FormDescription>Your company will be public.</FormDescription> */}
