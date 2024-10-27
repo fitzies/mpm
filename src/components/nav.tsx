@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Sparkles, User } from "lucide-react";
+import { ArrowUpRight, Bell, Menu, Sparkles, User } from "lucide-react";
 import Link from "next/link"; // Import Link from next/link
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -12,22 +12,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { MouseEventHandler, useState } from "react";
+import { motion } from "framer-motion";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 const NavItem = ({
   title,
   selected,
   href,
+  large,
+  onClick,
+  mobile,
 }: {
   title: string;
   selected: boolean;
   href: string; // Add href prop
+  large?: boolean;
+  onClick?: MouseEventHandler<HTMLAnchorElement> | undefined;
+  mobile?: boolean;
 }) => {
   return (
-    <Link href={href}>
+    <Link href={href} onClick={onClick}>
       <p
         className={`text-sm font-medium hover:text-white duration-150 cursor-pointer ${
           !selected ? "text-zinc-400" : "text-black dark:text-white"
-        }`}
+        } ${large ? "!text-lg" : ""} ${mobile ? "lg:!text-transparent" : ""}`}
       >
         {title}
       </p>
@@ -36,6 +45,7 @@ const NavItem = ({
 };
 
 const Nav = () => {
+  const [navOpened, setNavOpened] = useState<boolean>(false);
   const pathname = usePathname();
 
   // Hide Nav if the pathname is just '/'
@@ -57,68 +67,128 @@ const Nav = () => {
   const isStatuses = pathArr[1] === "company" && pathArr[3] === "statuses"; // company/{companyName}/statuses
   // const isStrength = pathArr[1] === "company" && pathArr[3] === "strength"; // company/{companyName}/statuses
 
+  const variants = {
+    open: { opacity: 1, x: 0 },
+    closed: { opacity: 0, x: "-100%" },
+  };
+
   return (
-    <div className="w-screen fixed px-8 py-3 z-50 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-6 bg-white dark:bg-zinc-950">
-      <Sparkles className="lg:block hidden" />
-      <NavItem
-        title="Dashboard"
-        selected={isDashboard}
-        href={`/company/${companyName}`}
-      />
-      <NavItem
-        title="Conducts"
-        selected={isConducts}
-        href={`/company/${companyName}/conducts`}
-      />
-      <NavItem
-        title="Statuses"
-        selected={isStatuses}
-        href={`/company/${companyName}/statuses`}
-      />
-      <DropdownMenu>
-        <DropdownMenuTrigger className="ml-auto lg:mr-3">
-          <Avatar>
-            <AvatarFallback>
-              <User className="scale-90" />
-            </AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Company</DropdownMenuLabel>
-          {/* <DropdownMenuItem asChild>
-            <Link href={`/profile`}>Profile</Link>
-          </DropdownMenuItem> */}
-          <DropdownMenuItem asChild>
-            <Link
-              href={`/company/${companyName}/insights`}
-              className="cursor-pointer"
-            >
-              Company Insights
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link
-              href={`/company/${companyName}/nominal-roll`}
-              className="cursor-pointer"
-            >
-              Nominal Roll
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuLabel>Other</DropdownMenuLabel>
-          <DropdownMenuItem asChild>
-            <Link
-              href={`/barrack-damages`}
-              className="cursor-pointer"
-              target="_blank"
-            >
-              Barrack Damages
-              <ArrowUpRight className="scale-75" />
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <>
+      <div
+        className={`w-screen fixed px-8 py-3 z-50 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-6 bg-white dark:bg-zinc-950 ${
+          navOpened ? "!hidden" : ""
+        }`}
+      >
+        <div className="hidden lg:flex gap-6 justify-start items-center">
+          <Sparkles className="lg:block hidden" />
+          <NavItem
+            title="Dashboard"
+            selected={isDashboard}
+            href={`/company/${companyName}`}
+          />
+          <NavItem
+            title="Conducts"
+            selected={isConducts}
+            href={`/company/${companyName}/conducts`}
+          />
+          <NavItem
+            title="Statuses"
+            selected={isStatuses}
+            href={`/company/${companyName}/statuses`}
+          />
+        </div>
+        <div
+          className="lg:hidden flex"
+          onClick={() => setNavOpened((prev) => !prev)}
+        >
+          <Menu />
+        </div>
+        <div className="ml-auto flex items-center gap-4">
+          <Popover>
+            <PopoverTrigger>
+              <Bell className="text-zinc-400 scale-90" />
+            </PopoverTrigger>
+            <PopoverContent className="text-sm">
+              You have no notifications
+            </PopoverContent>
+          </Popover>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="lg:mr-3">
+              <Avatar>
+                <AvatarFallback>
+                  <User className="scale-90" />
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Company</DropdownMenuLabel>
+              {/* <DropdownMenuItem asChild>
+              <Link href={`/profile`}>Profile</Link>
+            </DropdownMenuItem> */}
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/company/${companyName}/insights`}
+                  className="cursor-pointer"
+                >
+                  Company Insights
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/company/${companyName}/nominal-roll`}
+                  className="cursor-pointer"
+                >
+                  Nominal Roll
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Other</DropdownMenuLabel>
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/barrack-damages`}
+                  className="cursor-pointer"
+                  target="_blank"
+                >
+                  Barrack Damages
+                  <ArrowUpRight className="scale-75" />
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+      <motion.nav
+        className="flex-col px-8 py-8 gap-4 fixed z-50 bg-black w-full h-screen lg:hidden lg:bg-transparent flex"
+        variants={variants}
+        transition={{ duration: 0.25 }}
+        animate={navOpened ? "open" : "closed"}
+      >
+        <NavItem
+          title="Dashboard"
+          selected={isDashboard}
+          href={`/company/${companyName}`}
+          large
+          onClick={() => setNavOpened((prev) => !prev)}
+          mobile
+        />
+        <NavItem
+          title="Conducts"
+          selected={isConducts}
+          href={`/company/${companyName}/conducts`}
+          large
+          onClick={() => setNavOpened((prev) => !prev)}
+          mobile
+        />
+        <NavItem
+          title="Statuses"
+          selected={isStatuses}
+          href={`/company/${companyName}/statuses`}
+          large
+          onClick={() => setNavOpened((prev) => !prev)}
+          mobile
+        />
+      </motion.nav>
+    </>
   );
 };
 

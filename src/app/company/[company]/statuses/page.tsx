@@ -72,13 +72,15 @@ const Page = async ({
   return (
     <PageWrapper className="flex flex-col items-center">
       <Tabs
-        defaultValue="All"
+        defaultValue={"Statuses"}
         className="flex flex-col items-center my-4 lg:w-5/6 w-full"
       >
-        <div className="relative w-full flex justify-between items-center">
+        <div className="relative w-full flex lg:justify-between items-center">
           <Search />
           <TabsList className="lg:mx-auto">
-            <TabsTrigger value="All">All</TabsTrigger>
+            <TabsTrigger value="All" className="hidden lg:block">
+              All
+            </TabsTrigger>
             <TabsTrigger value="Statuses">Statuses</TabsTrigger>
             <TabsTrigger value="Out of camp">Out of camp</TabsTrigger>
             <TabsTrigger value="Commanders">CR</TabsTrigger>
