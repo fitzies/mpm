@@ -84,7 +84,7 @@ const Nav = () => {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>Account</DropdownMenuLabel>
+          <DropdownMenuLabel>Company</DropdownMenuLabel>
           {/* <DropdownMenuItem asChild>
             <Link href={`/profile`}>Profile</Link>
           </DropdownMenuItem> */}
