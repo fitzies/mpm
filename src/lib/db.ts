@@ -4,9 +4,26 @@ import { getSingaporeDate, isWeekendOrMonday, parseDate } from "./utils";
 import {
   ActiveStatusWithCommander,
   ActiveStatusWithRecruit,
+  SessionData,
 } from "../../types";
 
-export const getCompany = async (company: string) => {
+export const getCompany = async (company: string | number) => {
+  if (typeof company === "number") {
+    return await prisma.company.findFirst({
+      where: {
+        id: company,
+      },
+      include: {
+        recruits: {
+          include: {
+            statuses: true, // Include the statuses of each recruit
+            conducts: true,
+          },
+        },
+        commanders: { include: { statuses: true } }, // Include commanders
+      },
+    });
+  }
   return await prisma.company.findFirst({
     where: {
       name: company.substring(0, 1).toUpperCase() + company.substring(1),
@@ -304,4 +321,8 @@ export const getRSOCount = async (companyId: number) => {
 
 export const getBarrackDamages = async () => {
   return await prisma.barrackDamage.findMany();
+};
+
+export const getCommander = async (session: SessionData) => {
+  return await prisma.commander.findFirst({ where: { id: session.userId } });
 };

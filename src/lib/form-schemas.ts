@@ -18,3 +18,15 @@ export const barrackDamageSchema = z.object({
     .min(10, { message: "The description must be at least 10 characters." }),
   severe: z.boolean(),
 });
+
+export const postActionReviewSchema = z.object({
+  name: z.string().trim(),
+  company: z.string(),
+  conductType: z.string().min(1, { message: "Conduct type is required" }),
+  dateReported: z.string({ required_error: "A date reported is required" }),
+  observation: z.string().min(20, "Observation must be at least 10 characters"),
+  reflection: z.string().min(20, "Reflection must be at least 10 characters"),
+  recommendation: z
+    .string()
+    .min(20, "Recommendation must be at least 10 characters"),
+});

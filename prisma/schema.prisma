@@ -21,6 +21,7 @@ model Company {
 
   paradeStateSubmitted String?
   conducts             Conduct[]
+  PostActionReview     PostActionReview[]
 }
 
 model Recruit {
@@ -153,4 +154,19 @@ model BarrackDamage {
 
   severe  Boolean
   company String
+}
+
+model PostActionReview {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  companyId Int
+  company   Company @relation(fields: [companyId], references: [id])
+
+  conductType  ConductType
+  dateReported String
+
+  observation    String
+  reflection     String
+  recommendation String
 }

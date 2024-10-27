@@ -53,6 +53,7 @@ const Nav = () => {
     pathname === "/" ||
     pathname.includes("/polar") ||
     pathname.includes("/barrack-damages") ||
+    pathname.includes("/post-action-review") ||
     pathname.includes("/login")
   ) {
     return null;
@@ -150,6 +151,16 @@ const Nav = () => {
                   target="_blank"
                 >
                   Barrack Damages
+                  <ArrowUpRight className="scale-75" />
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/post-action-review`}
+                  className="cursor-pointer"
+                  target="_blank"
+                >
+                  Post Action Review
                   <ArrowUpRight className="scale-75" />
                 </Link>
               </DropdownMenuItem>

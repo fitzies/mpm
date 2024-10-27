@@ -2,9 +2,10 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { deleteStatus } from "./db";
+import { deleteStatus, getCompany } from "./db";
 import prisma from "./prisma";
 import {
+  addSpacesToEnumValue,
   dateToStringDate,
   decrypt,
   encrypt,
@@ -24,7 +25,8 @@ import axios from "axios";
 import { paradeStateMessage } from "./parade-state-message";
 import { SessionData } from "../../types";
 import { redirect } from "next/navigation";
-import { barrackDamageSchema } from "./form-schemas";
+import { barrackDamageSchema, postActionReviewSchema } from "./form-schemas";
+import { z } from "zod";
 
 export const handleDeleteStatus = async (data: FormData) => {
   const statusId = data.get("statusId");
@@ -224,7 +226,7 @@ export async function handleLogin(sessionData: SessionData): Promise<void> {
   // Redirect or handle the response after setting the cookie
 }
 
-export async function getSessionData() {
+export async function getSessionData(): Promise<SessionData> {
   const encryptedSessionData = cookies().get("session")?.value;
   return encryptedSessionData
     ? JSON.parse(decrypt(encryptedSessionData, process.env.ENCRYPTED_KEY!))
@@ -956,4 +958,40 @@ export async function sendTelegram(
       console.log("Something went wrong");
     }
   }
+}
+
+export async function handlePostActionReviewForm(data: FormData) {
+  const res = Object.fromEntries(
+    Array.from(data.entries(), ([key, value]) => [key, value.toString()])
+  ) as z.infer<typeof postActionReviewSchema>;
+
+  const company = await getCompany(res.company);
+
+  if (!company) {
+    throw Error("This company doesn't exist");
+  }
+
+  await prisma.postActionReview.create({
+    data: {
+      name: res.name,
+      conductType: res.conductType as ConductType,
+      dateReported: getDate(),
+      observation: res.observation,
+      reflection: res.reflection,
+      recommendation: res.recommendation,
+      companyId: company.id,
+    },
+  });
+
+  const token = "7550508137:AAGFft3OfadyhDSqVtgkWYlY6mhIwpK8780";
+  const chatId = "-1002282901616";
+
+  const message = `${res.name} submitted a new PAR for ${addSpacesToEnumValue(
+    res.conductType
+  )} conducted on ${getDate()} from {{Company}} company.\n\nObservation: ${
+    res.observation
+  }\n\nReflection: ${res.reflection}\n\nRecomm  endation: ${res.reflection}`;
+
+  await sendTelegram(token, chatId, message);
+  redirect("/post-action-review/form/submitted");
 }
