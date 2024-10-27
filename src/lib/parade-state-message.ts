@@ -51,7 +51,7 @@ Current Recruit Strength: ${currentRecruitStrength}`,
     `MC (${Object.keys(mcMap).length.toString()}):
 ${Object.entries(mcMap)
   .map(([key, values], index) => {
-    return `${index + 1} ${key}\n${values
+    return `${index + 1}. ${key}\n${values
       .map((value) => `\t• ${value}`)
       .join("\n")}`; // Using two spaces instead of '\t'
   })
@@ -60,7 +60,7 @@ ${Object.entries(mcMap)
     `Statuses (${Object.keys(statusMap).length.toString()}):
 ${Object.entries(statusMap)
   .map(([key, values], index) => {
-    return `${index + 1} ${key}\n${values
+    return `${index + 1}. ${key}\n${values
       .map((value) => `\t• ${value}`)
       .join("\n")}`; // Using two spaces instead of '\t'
   })
@@ -69,7 +69,7 @@ ${Object.entries(statusMap)
     `Other (${Object.keys(otherMap).length.toString()}):
 ${Object.entries(otherMap)
   .map(([key, values], index) => {
-    return `${index + 1} ${key}\n${values
+    return `${index + 1}. ${key}\n${values
       .map((value) => `\t• ${value}`)
       .join("\n")}`; // Using two spaces instead of '\t'
   })
@@ -81,7 +81,7 @@ Commanders Present: ${currentCommanderStrength}
 Commanders (${Object.keys(commanderMap).length.toString()}):
 ${Object.entries(commanderMap)
   .map(([key, values], index) => {
-    return `${index + 1} ${key}\n${values
+    return `${index + 1}. ${key}\n${values
       .map((value) => `\t• ${value}`)
       .join("\n")}`; // Using two spaces instead of '\t'
   })
