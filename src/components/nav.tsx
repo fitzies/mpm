@@ -55,6 +55,7 @@ const Nav = () => {
     pathname.includes("/barrack-damages") ||
     pathname.includes("/post-action-review") ||
     pathname.includes("/post-action-review/form") ||
+    pathname.includes("/companies") ||
     pathname.includes("/login")
   ) {
     return null;

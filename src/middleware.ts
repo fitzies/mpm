@@ -7,6 +7,7 @@ export function middleware(request: NextRequest) {
   const isLoginRoute = request.nextUrl.pathname === "/login";
   const isBarrackDamageForm =
     request.nextUrl.pathname === "/barrack-damages/form";
+  const isHomePage = request.nextUrl.pathname === "/";
 
   // Redirect to /login if user is not logged in and not on /login or /polar routes
   if (!session && !isLoginRoute && !isPolarRoute && !isBarrackDamageForm) {
@@ -14,8 +15,8 @@ export function middleware(request: NextRequest) {
   }
 
   // Redirect to / if user is logged in and on /login
-  if (session && isLoginRoute) {
-    return Response.redirect(new URL("/", request.url));
+  if (session && (isLoginRoute || isHomePage)) {
+    return Response.redirect(new URL("/companies", request.url));
   }
 }
 
