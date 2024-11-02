@@ -4,10 +4,12 @@ export default function Chunk({
   title,
   body,
   sub,
+  btn,
 }: {
   title: string;
   body: string;
   sub?: string;
+  btn?: JSX.Element;
 }) {
   return (
     <Card>
@@ -15,9 +17,12 @@ export default function Chunk({
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {/* <DollarSign className="h-4 w-4 text-muted-foreground" /> */}
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{body}</div>
-        <p className="text-xs text-muted-foreground">{sub}</p>
+      <CardContent className="flex justify-between">
+        <div>
+          <div className="text-2xl font-bold">{body}</div>
+          <p className="text-xs text-muted-foreground">{sub}</p>
+        </div>
+        {btn ?? null}
       </CardContent>
     </Card>
   );

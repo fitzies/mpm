@@ -80,7 +80,9 @@ const Page = async ({
       <div className="w-full flex justify-between items-center mb-6">
         <div className="flex lg:flex-row flex-col lg:items-center lg:gap-4 items-start">
           <h1 className="text-3xl font-bold">{conduct.title}</h1>
-          <p className="text-sm text-zinc-400">{formatString(conduct.date)}</p>
+          <p className="text-sm text-zinc-400">
+            {formatString(conduct.date).toDateString()}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <CustomDialog

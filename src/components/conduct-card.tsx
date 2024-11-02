@@ -13,12 +13,14 @@ import { ConductWithRecruits } from "../../types";
 import Link from "next/link";
 
 const ConductCard = ({ conduct }: { conduct: ConductWithRecruits }) => {
+  const date = formatString(conduct.date as string);
+
   return (
     <>
       <Card className="hover:-translate-y-1 duration-150">
         <CardHeader>
           <CardTitle>{conduct.title}</CardTitle>
-          <CardDescription>{formatString(conduct.date)}</CardDescription>
+          <CardDescription>{`${date.toDateString()}`}</CardDescription>
         </CardHeader>
         <CardContent>
           <Progress

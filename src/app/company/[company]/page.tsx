@@ -2,6 +2,7 @@ import Chunk from "@/components/chunk";
 import Dashboard from "@/components/dashboard";
 import PageWrapper from "@/components/page-wrapper";
 import ParadeChunk from "@/components/parade-chunk";
+import { Button } from "@/components/ui/button";
 import { getActiveStatuses, getCompany } from "@/lib/db";
 import prisma from "@/lib/prisma";
 import {
@@ -10,6 +11,8 @@ import {
   parseDate,
 } from "@/lib/utils";
 import { StatusType } from "@prisma/client";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const Page = async ({ params }: { params: { company: string } }) => {
   const companyName =
@@ -113,6 +116,15 @@ const Page = async ({ params }: { params: { company: string } }) => {
               getPlatoonStrength(company.recruits, 1) -
               getOutOfCampStrength(company.recruits, 1)
             } / ${getPlatoonStrength(company.recruits, 1)}`}
+            btn={
+              <Button size={"sm"} variant={"ghost"} asChild>
+                <Link
+                  href={`/company/${company.name.toLowerCase()}/sections?platoon=1`}
+                >
+                  <ArrowRight className="scale-75" />
+                </Link>
+              </Button>
+            }
           />
           <Chunk
             title="Platoon 2 Strength"
@@ -120,6 +132,15 @@ const Page = async ({ params }: { params: { company: string } }) => {
               getPlatoonStrength(company.recruits, 2) -
               getOutOfCampStrength(company.recruits, 2)
             } / ${getPlatoonStrength(company.recruits, 2)}`}
+            btn={
+              <Button size={"sm"} variant={"ghost"} asChild>
+                <Link
+                  href={`/company/${company.name.toLowerCase()}/sections?platoon=2`}
+                >
+                  <ArrowRight className="scale-75" />
+                </Link>
+              </Button>
+            }
           />
           <Chunk
             title="Platoon 3 Strength"
@@ -127,6 +148,15 @@ const Page = async ({ params }: { params: { company: string } }) => {
               getPlatoonStrength(company.recruits, 3) -
               getOutOfCampStrength(company.recruits, 3)
             } / ${getPlatoonStrength(company.recruits, 3)}`}
+            btn={
+              <Button size={"sm"} variant={"ghost"} asChild>
+                <Link
+                  href={`/company/${company.name.toLowerCase()}/sections?platoon=3`}
+                >
+                  <ArrowRight className="scale-75" />
+                </Link>
+              </Button>
+            }
           />
           <Chunk
             title="Platoon 4 Strength"
@@ -134,8 +164,17 @@ const Page = async ({ params }: { params: { company: string } }) => {
               getPlatoonStrength(company.recruits, 4) -
               getOutOfCampStrength(company.recruits, 4)
             } / ${getPlatoonStrength(company.recruits, 4)}`}
+            btn={
+              <Button size={"sm"} variant={"ghost"} asChild>
+                <Link
+                  href={`/company/${company.name.toLowerCase()}/sections?platoon=4`}
+                >
+                  <ArrowRight className="scale-75" />
+                </Link>
+              </Button>
+            }
           />
-          {company.id !== 6 ? <ParadeChunk company={company} /> : null}
+          {company.id < 6 ? <ParadeChunk company={company} /> : null}
         </div>
       </main>
     </PageWrapper>

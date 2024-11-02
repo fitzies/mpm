@@ -22,12 +22,14 @@ export default function Dashboard({
   data,
   length,
   href,
+  noBtn,
 }: {
   title: string;
   headers: { left: string; right: string };
   data?: ActiveStatusWithRecruit[];
-  length: number;
+  length: number | string;
   href?: string;
+  noBtn?: boolean;
 }) {
   if (!data) {
     data = [];
@@ -42,12 +44,14 @@ export default function Dashboard({
           </CardTitle>
           {/* <CardDescription>{description}</CardDescription> */}
         </div>
-        <Button asChild size="sm" className="ml-auto gap-1">
-          <Link href={href ?? ""}>
-            View All
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-        </Button>
+        {noBtn ? null : (
+          <Button asChild size="sm" className="ml-auto gap-1">
+            <Link href={href ?? ""}>
+              View All
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        )}
       </CardHeader>
       <CardContent>
         <Table>

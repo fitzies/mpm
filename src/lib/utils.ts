@@ -410,7 +410,8 @@ export const removeSpacesToEnumValue = (value: string) => {
 };
 
 export const formatString = (date: string) => {
-  return parseDate(date).toUTCString().split("23")[0];
+  return parseDate(date);
+  // return parseDate(date).toUTCString().split("23")[0];
 };
 
 export const dateToStringDate = (date: Date): string => {
