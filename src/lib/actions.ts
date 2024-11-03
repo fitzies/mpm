@@ -995,3 +995,8 @@ export async function handlePostActionReviewForm(data: FormData) {
   await sendTelegram(token, chatId, message);
   redirect("/post-action-review/form/submitted");
 }
+
+export const signOut = async () => {
+  cookies().delete("session");
+  redirect("/login");
+};

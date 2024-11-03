@@ -15,6 +15,8 @@ import {
 import { MouseEventHandler, useState } from "react";
 import { motion } from "framer-motion";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { signOut } from "@/lib/actions";
+import { Button } from "./ui/button";
 
 const NavItem = ({
   title,
@@ -146,7 +148,7 @@ const Nav = () => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuLabel>Other</DropdownMenuLabel>
-              <DropdownMenuItem asChild>
+              {/* <DropdownMenuItem asChild>
                 <Link
                   href={`/barrack-damages`}
                   className="cursor-pointer"
@@ -155,7 +157,7 @@ const Nav = () => {
                   Barrack Damages
                   <ArrowUpRight className="scale-75" />
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem asChild>
                 <Link
                   href={`/post-action-review/form`}
@@ -165,6 +167,21 @@ const Nav = () => {
                   Post Action Review
                   <ArrowUpRight className="scale-75" />
                 </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuLabel>Account</DropdownMenuLabel>
+              <DropdownMenuItem>
+                <form action={async () => await signOut()}>
+                  <Button
+                    variant={"ghost"}
+                    size={"sm"}
+                    className="!px-0 !py-1 h-0 text-red-400"
+                  >
+                    Logout
+                  </Button>
+                </form>
+                {/* <ArrowUpRight className="scale-75" /> */}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
