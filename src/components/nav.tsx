@@ -172,14 +172,10 @@ const Nav = () => {
 
               <DropdownMenuLabel>Account</DropdownMenuLabel>
               <DropdownMenuItem>
-                <form action={async () => await signOut()}>
-                  <Button
-                    variant={"ghost"}
-                    size={"sm"}
-                    className="!px-0 !py-1 h-0 text-red-400"
-                  >
+                <form action={async () => await signOut()} className="w-full">
+                  <button className="w-full text-red-400 text-left">
                     Logout
-                  </Button>
+                  </button>
                 </form>
                 {/* <ArrowUpRight className="scale-75" /> */}
               </DropdownMenuItem>

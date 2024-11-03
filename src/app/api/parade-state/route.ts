@@ -5,14 +5,18 @@ import { Company } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
+// Utility function to create a delay
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export async function GET(request: Request) {
   try {
     const companies = await prisma.company.findMany();
 
-    // Use Promise.all to send all messages concurrently
-    await Promise.all(
-      companies.map((company: Company) => sendTelegramState(company))
-    );
+    // Loop through each company, send Telegram state, then wait 1 second
+    for (const company of companies) {
+      await sendTelegramState(company);
+      await delay(1000); // 1-second delay
+    }
 
     // Return a response after processing all companies
     return NextResponse.json({
