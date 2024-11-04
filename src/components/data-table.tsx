@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
+import Link from "next/link";
 
 export default function DataTable({
   data,
@@ -77,7 +78,16 @@ export default function DataTable({
                 key={`cell-${rowIndex}-${cellIndex}`}
                 className="first:font-medium last:text-right"
               >
-                {cell}
+                {cellIndex === 1 ? (
+                  <Link
+                    href={`nominal-roll/${cells[0]}`}
+                    className="hover:underline"
+                  >
+                    {cell}
+                  </Link>
+                ) : (
+                  cell
+                )}
               </TableCell>
             ))}
           </TableRow>

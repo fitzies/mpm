@@ -1,4 +1,4 @@
-import { StatusType } from "@prisma/client";
+import { Recruit, StatusType } from "@prisma/client";
 import prisma from "./prisma";
 import { getSingaporeDate, isWeekendOrMonday, parseDate } from "./utils";
 import {
@@ -201,7 +201,7 @@ export const deleteStatus = async (statusId: number) => {
   await prisma.status.delete({ where: { id: statusId } });
 };
 
-export const getRecruit = async (id: string) => {
+export const getRecruit = async (id: string): Promise<Recruit | null> => {
   return await prisma.recruit.findFirst({ where: { id } });
 };
 
@@ -325,4 +325,11 @@ export const getBarrackDamages = async () => {
 
 export const getCommander = async (session: SessionData) => {
   return await prisma.commander.findFirst({ where: { id: session.userId } });
+};
+
+export const getAllStatusesPerRecruit = async (recruit: Recruit) => {
+  const statuses = await prisma.status.findMany({
+    where: { recruitId: recruit.id },
+  });
+  return statuses;
 };
