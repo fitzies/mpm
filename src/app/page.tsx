@@ -1,7 +1,7 @@
 import Image from "next/image";
 import capture from "../images/capture.png";
 import { BorderBeam } from "@/components/ui/border-beam";
-import { BentoDemo } from "@/components/bento-demo";
+// import { BentoDemo } from "@/components/bento-demo";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import LearnMoreBtn from "@/components/learn-more";
@@ -15,7 +15,7 @@ export default async function Page() {
           all in one place
         </h1>
         <p className="text-zinc-400 lg:text-lg text-xs text-center">
-          Easily keep track of your team's activities, presence, and overall
+          Easily keep track of your teams activities, presence, and overall
           performance details in a single, streamlined platform for oversight.
         </p>
       </div>
