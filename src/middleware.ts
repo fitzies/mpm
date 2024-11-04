@@ -10,11 +10,16 @@ export function middleware(request: NextRequest) {
   const isHomePage = request.nextUrl.pathname === "/";
 
   // Redirect to /login if user is not logged in and not on /login or /polar routes
-  if (!session && !isLoginRoute && !isPolarRoute && !isBarrackDamageForm) {
+  if (
+    !session &&
+    !isPolarRoute &&
+    !isBarrackDamageForm &&
+    !isLoginRoute &&
+    !isHomePage
+  ) {
     return Response.redirect(new URL("/login", request.url));
   }
 
-  // Redirect to / if user is logged in and on /login
   if (session && (isLoginRoute || isHomePage)) {
     return Response.redirect(new URL("/companies", request.url));
   }

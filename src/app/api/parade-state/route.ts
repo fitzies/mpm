@@ -11,7 +11,9 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function GET(request: Request) {
   try {
-    const companies = await prisma.company.findMany();
+    const companies = await (
+      await prisma.company.findMany()
+    ).filter((coy) => coy.id > 0 && coy.id < 5);
 
     // Loop through each company, send Telegram state, then wait 1 second
     for (const company of companies) {

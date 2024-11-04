@@ -48,5 +48,5 @@ export async function signIn(formData: FormData): Promise<string | true> {
   };
 
   handleLogin(userData);
-  redirect("/");
+  redirect("/companies");
 }
