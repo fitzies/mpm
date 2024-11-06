@@ -23,6 +23,7 @@ import {
 import { Company } from "@prisma/client";
 import { handleSubmitParadeState } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
+import GenerateParadeStateText from "./generate-parade-state-text";
 
 const SubmitParadeStateDialog = ({ company }: { company: Company }) => {
   const [error, setError] = useState<string>("");
@@ -121,7 +122,11 @@ const ParadeChunk = ({ company }: { company: Company }) => {
         {/* <Button asChild size="sm" className="gap-1" variant={"secondary"}>
           <Link href={`${company}/statuses`}>Edit Statuses</Link>
           </Button> */}
-        <SubmitParadeStateDialog company={company} />
+        {company.id < 6 ? (
+          <SubmitParadeStateDialog company={company} />
+        ) : (
+          <GenerateParadeStateText company={company} />
+        )}
         {/* <p className="text-sm text-zinc-400 italic">
           Will auto-submit in {countdown}
         </p> */}

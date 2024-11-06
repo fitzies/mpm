@@ -174,7 +174,7 @@ const Page = async ({ params }: { params: { company: string } }) => {
               </Button>
             }
           />
-          {company.id < 6 ? <ParadeChunk company={company} /> : null}
+          <ParadeChunk company={company} />
         </div>
       </main>
     </PageWrapper>

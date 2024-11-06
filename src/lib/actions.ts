@@ -17,6 +17,7 @@ import {
 } from "./utils";
 import {
   BarrackDamageType,
+  Company,
   ConductType,
   Recruit,
   StatusType,
@@ -999,4 +1000,14 @@ export async function handlePostActionReviewForm(data: FormData) {
 export const signOut = async () => {
   cookies().delete("session");
   redirect("/login");
+};
+
+export const serverGenerateParadeStateText = async (data: FormData) => {
+  const company = data.get("company")?.toString();
+  if (!company) {
+    return "Error";
+  }
+
+  const res = await paradeStateMessage(JSON.parse(company) as Company);
+  return res;
 };
