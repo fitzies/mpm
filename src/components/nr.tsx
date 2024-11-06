@@ -25,6 +25,8 @@ export default function NR({
     return data.rows.filter((_, index) => selected.includes(index));
   };
 
+  const pattern = /^[A-Z]\d{4} ([A-Z]+ ?)+(\n[A-Z]\d{4} ([A-Z]+ ?)+)*$/;
+
   return (
     <div>
       <div className="w-full flex justify-end items-center gap-2 mb-4">
@@ -65,7 +67,7 @@ export default function NR({
         </CustomDialog>
         <CustomDialog
           title="Add new recruits"
-          description="Copy and paste your recruits name and 4D from a spreadsheet to insert them."
+          description="Copy and paste your recruits name and 4D from a spreadsheet to insert them. Please make sure their names are all uppercase."
           trigger={<Button size={"sm"}>Add recruit(s)</Button>}
           action={async (data) => {
             const res = await createRecruits(data);
@@ -73,7 +75,11 @@ export default function NR({
               toast({ title: "Recruits have been added" });
             }
           }}
-          btn={<Button className="w-full">Create</Button>}
+          btn={
+            <Button className="w-full" disabled={!pattern.test(newRecruits)}>
+              Create
+            </Button>
+          }
           loadingBtn={
             <Button className="w-full" disabled>
               ...
