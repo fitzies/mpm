@@ -118,6 +118,7 @@ enum ConductType {
   IPPT
   BCCT
   Fartlek
+  Outfield
 }
 
 model ReportSick {
