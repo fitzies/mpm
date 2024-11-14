@@ -14,7 +14,7 @@ const AddStatusPopover = ({
     <>
       <Popover>
         <PopoverTrigger asChild>
-          <Button className="absolute right-0">+</Button>
+          <Button className="">+</Button>
         </PopoverTrigger>
         <PopoverContent className="flex flex-col w-32 !p-1 gap-1">
           <Bubble type="Recruit" />

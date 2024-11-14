@@ -10,6 +10,9 @@ import Search from "@/components/search";
 
 import AddStatusPopover from "@/components/add-status-popover";
 import { StatusTable } from "@/components/status-table";
+import { Button } from "@/components/ui/button";
+import { History } from "lucide-react";
+import TimeMachine from "@/components/time-machine";
 
 const Page = async ({
   params,
@@ -85,7 +88,10 @@ const Page = async ({
             <TabsTrigger value="Out of camp">Out of camp</TabsTrigger>
             <TabsTrigger value="Commanders">CR</TabsTrigger>
           </TabsList>
-          <AddStatusPopover company={company} />
+          <div className="flex gap-3 absolute right-0">
+            <TimeMachine company={company.name.toLowerCase()} />
+            <AddStatusPopover company={company} />
+          </div>
         </div>
         <TabsContent value="All" className="w-full">
           <StatusTable
