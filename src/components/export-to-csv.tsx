@@ -15,13 +15,13 @@ export default function ExportToCsv({
 }) {
   const { arr, recruits } = sortForConductTable(conducts, company, type);
 
-  const csv = generateCSV(recruits, arr);
-
   return (
     <Button
       size={"sm"}
       variant={"secondary"}
       onClick={() => {
+        const csv = generateCSV(recruits, arr);
+
         downloadCSV(csv, "conduct");
       }}
     >
