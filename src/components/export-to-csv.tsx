@@ -2,7 +2,7 @@
 
 import { Company, Conduct, ConductType, Recruit } from "@prisma/client";
 import { Button } from "./ui/button";
-import { downloadCSV, generateCSV, sortForConductTable } from "@/lib/utils";
+import { downloadExcel, generateExcel, sortForConductTable } from "@/lib/utils";
 
 export default function ExportToCsv({
   type,
@@ -20,8 +20,8 @@ export default function ExportToCsv({
       size={"sm"}
       variant={"secondary"}
       onClick={() => {
-        const csv = generateCSV(recruits, arr);
-        downloadCSV(csv, "conduct");
+        const workbook = generateExcel(recruits, arr);
+        downloadExcel(workbook, "conduct.xlsx");
       }}
     >
       Export to CSV

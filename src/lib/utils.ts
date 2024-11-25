@@ -1,3 +1,4 @@
+import * as XLSX from "xlsx";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
@@ -489,10 +490,10 @@ export const sortForConductTable = (
   return { arr, recruits };
 };
 
-export function generateCSV(
+export function generateExcel(
   recruits: Recruit[],
   arr: (Conduct & { recruits: Recruit[] })[]
-): string {
+): XLSX.WorkBook {
   // Define the headers
   const headers = ["Name", ...arr.map((header) => header.title)];
 
@@ -506,18 +507,18 @@ export function generateCSV(
     return row;
   });
 
-  // Combine headers and rows into TSV format (using "\t" instead of commas)
-  const tsvContent = [headers, ...rows].map((e) => e.join("\t")).join("\n");
+  // Combine headers and rows for the sheet
+  const worksheetData = [headers, ...rows];
+  const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
 
-  return tsvContent;
+  // Create a workbook and add the worksheet
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Recruits");
+
+  return workbook;
 }
 
-export function downloadCSV(tsvContent: string, filename: string): void {
-  const blob = new Blob([tsvContent], { type: "text/tab-separated-values" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
+export function downloadExcel(workbook: XLSX.WorkBook, filename: string): void {
+  // Write the workbook as an .xlsx file and trigger download
+  XLSX.writeFile(workbook, filename);
 }
