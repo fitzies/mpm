@@ -506,14 +506,14 @@ export function generateCSV(
     return row;
   });
 
-  // Combine headers and rows into CSV format
-  const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
+  // Combine headers and rows into TSV format (using "\t" instead of commas)
+  const tsvContent = [headers, ...rows].map((e) => e.join("\t")).join("\n");
 
-  return csvContent;
+  return tsvContent;
 }
 
-export function downloadCSV(csvContent: string, filename: string): void {
-  const blob = new Blob([csvContent], { type: "text/csv" });
+export function downloadCSV(tsvContent: string, filename: string): void {
+  const blob = new Blob([tsvContent], { type: "text/tab-separated-values" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;

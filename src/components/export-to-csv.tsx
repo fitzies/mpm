@@ -21,7 +21,6 @@ export default function ExportToCsv({
       variant={"secondary"}
       onClick={() => {
         const csv = generateCSV(recruits, arr);
-
         downloadCSV(csv, "conduct");
       }}
     >
