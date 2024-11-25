@@ -1,5 +1,6 @@
 import { AgTable } from "@/components/ag-table";
 import { ConductSelect } from "@/components/conduct-select";
+import ExportToCsv from "@/components/export-to-csv";
 import PageWrapper from "@/components/page-wrapper";
 import prisma from "@/lib/prisma";
 import { ConductType } from "@prisma/client";
@@ -27,13 +28,19 @@ export default async function Page({
     where: { companyId: company.id },
     include: { recruits: true },
   });
-
   return (
     <PageWrapper className="!py-24 !px-12 flex flex-col">
       <div className="w-full flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Overview</h1>
       </div>
-      <ConductSelect />
+      <div className="flex justify-between items-center">
+        <ConductSelect />
+        <ExportToCsv
+          type={searchParams.conduct as ConductType}
+          conducts={conducts}
+          company={company}
+        />
+      </div>
       <AgTable
         type={searchParams.conduct as ConductType}
         conducts={conducts}

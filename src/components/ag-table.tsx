@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { parseDate } from "@/lib/utils";
+import { parseDate, sortForConductTable } from "@/lib/utils";
 
 import { Company, Conduct, ConductType, Recruit } from "@prisma/client";
 import { Badge } from "./ui/badge";
@@ -21,18 +21,7 @@ export const AgTable = async ({
   conducts: (Conduct & { recruits: Recruit[] })[];
   company: Company & { recruits: Recruit[] };
 }) => {
-  let arr: (Conduct & { recruits: Recruit[] })[] = conducts.filter(
-    (conduct) => conduct.type === type
-  );
-
-  arr = arr.sort(
-    (a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime()
-  );
-
-  const recruits = company.recruits.sort(
-    (a, b) => parseInt(a.id.substring(1)) - parseInt(b.id.substring(1))
-  );
-
+  const { arr, recruits } = sortForConductTable(conducts, company, type);
   return (
     <>
       <Table className="my-4">

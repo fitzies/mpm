@@ -468,3 +468,56 @@ export const getStatusColor = (status: string) => {
       return "bg-gray-500";
   }
 };
+
+export const sortForConductTable = (
+  conducts: (Conduct & { recruits: Recruit[] })[],
+  company: Company & { recruits: Recruit[] },
+  type: ConductType
+) => {
+  let arr: (Conduct & { recruits: Recruit[] })[] = conducts.filter(
+    (conduct) => conduct.type === type
+  );
+
+  arr = arr.sort(
+    (a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime()
+  );
+
+  const recruits = company.recruits.sort(
+    (a, b) => parseInt(a.id.substring(1)) - parseInt(b.id.substring(1))
+  );
+
+  return { arr, recruits };
+};
+
+export function generateCSV(
+  recruits: Recruit[],
+  arr: (Conduct & { recruits: Recruit[] })[]
+): string {
+  // Define the headers
+  const headers = ["Name", ...arr.map((header) => header.title)];
+
+  // Define the rows
+  const rows = recruits.map((recruit) => {
+    const row = [`${recruit.id} ${recruit.name}`];
+    arr.forEach((value) => {
+      const hasRecruit = value.recruits.some((r) => r.id === recruit.id);
+      row.push(hasRecruit ? "Yes" : "No");
+    });
+    return row;
+  });
+
+  // Combine headers and rows into CSV format
+  const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
+
+  return csvContent;
+}
+
+export function downloadCSV(csvContent: string, filename: string): void {
+  const blob = new Blob([csvContent], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
