@@ -3,7 +3,11 @@ import { getActiveStatuses, getCompany } from "@/lib/db";
 import { DataTableType } from "../../../../../types";
 import NR from "@/components/nr";
 import { StatusType } from "@prisma/client";
-import { checkRecruitOutOfCamp, getLatestConduct } from "@/lib/utils";
+import {
+  checkRecruitOutOfCamp,
+  getLatestConduct,
+  parseDate,
+} from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,20 +38,29 @@ export default async function Page({
   );
 
   const tableData: DataTableType = {
-    headers: ["4D", "Name", "SOC", "RM", "HA", "Polar", "Booked in"],
+    headers: ["4D", "Name", "SOC", "RM", "HA", "Days Missed", "Booked in"],
     rows: recruits.map((recruit) => [
       recruit.id,
       recruit.name,
       getLatestConduct(recruit, "SOC"),
       getLatestConduct(recruit, "RouteMarch"),
-      "Nil",
-      <div className="opacity-50 hover:opacity-100" key={recruit.polarUserId}>
-        {recruit.polarUserId && recruit.polarAccessToken ? (
-          <Check className="scale-75 " />
-        ) : (
-          <X className="scale-75 " />
-        )}
-      </div>,
+      "Nil", // You can replace this with appropriate HA logic if needed
+      // Calculate total days missed
+      String(
+        recruit.statuses.reduce((total, status) => {
+          if (status.type === "MC") {
+            const startDate = parseDate(status.startDate); // Convert startDate to Date
+            const endDate = parseDate(status.endDate); // Convert endDate to Date
+            const daysMissed =
+              (endDate.getTime() - startDate.getTime()) /
+                (1000 * 60 * 60 * 24) +
+              1; // Inclusive of startDate
+            return total + daysMissed;
+          }
+          return total;
+        }, 0)
+      ),
+      // Check if recruit is booked in
       checkRecruitOutOfCamp(recruit.id, statuses) ? (
         <Badge variant={"destructive"} key={recruit.id + " booked in"}>
           No
