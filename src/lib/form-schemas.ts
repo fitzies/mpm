@@ -7,7 +7,7 @@ export const barrackDamageSchema = z.object({
     .min(1, { message: "Rank & Name is required" })
     .max(50)
     .regex(
-      /^(?:PVT|LCP|CPL|CFC|3SG|2SG|1SG|SSG|MSG|3WO|2WO|1WO|MWO|SWO|CWO|2LT|LTA|CPT|MAJ|LTC|SLTC|COL|BG|MG|LG)\s[A-Z][a-zA-Z]*$/,
+      /^(?:PTE|LCP|CPL|CFC|3SG|2SG|1SG|SSG|MSG|3WO|2WO|1WO|MWO|SWO|CWO|2LT|LTA|CPT|MAJ|LTC|SLTC|COL|BG|MG|LG)\s[A-Z][a-zA-Z]*$/,
       { message: "Invalid format. Use 'Rank Name' (e.g., '3SG Brian')." }
     ),
   company: z.string().min(1, { message: "Company is required" }),
